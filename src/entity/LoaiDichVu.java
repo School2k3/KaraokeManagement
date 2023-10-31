@@ -1,10 +1,13 @@
 package entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class LoaiDichVu {
-	private String maDichVu;
+	private String maLoaiDichVu;
 	private String tenLoaiDichVu;
 	public String getMaDichVu() {
-		return maDichVu;
+		return maLoaiDichVu;
 	}
 	public String getTenLoaiDichVu() {
 		return tenLoaiDichVu;
@@ -14,25 +17,27 @@ public class LoaiDichVu {
 		if(tenLoaiDichVu.trim().equals(""))
 			this.tenLoaiDichVu = tenLoaiDichVu;
 			else
-				throw new Exception("Lỗi mã loại dịch vụ không được rỗng!");
+				throw new Exception("Lỗi mã loaij dịch vụ không được rỗng!");
 	}
 	public LoaiDichVu(String maDichVu, String tenLoaiDichVu)throws Exception {
-		this.maDichVu= maDichVu;
+		this.maLoaiDichVu= maDichVu;
 		setTenLoaiDichVu(tenLoaiDichVu);
 	}
 	public LoaiDichVu(String maDichVu)throws Exception {
-		this.maDichVu= maDichVu;
+		this.maLoaiDichVu= maDichVu;
+		setTenLoaiDichVu(maDichVu);
 	}
 	public LoaiDichVu() {
 	}
+//	public LoaiDichVu(ResultSet rs) throws SQLException, Exception{
+//		
+//	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((maDichVu == null) ? 0 : maDichVu.hashCode());
-		result = prime * result
-				+ ((tenLoaiDichVu == null) ? 0 : tenLoaiDichVu.hashCode());
+				+ ((maLoaiDichVu == null) ? 0 : maLoaiDichVu.hashCode());
 		return result;
 	}
 	@Override
@@ -44,18 +49,13 @@ public class LoaiDichVu {
 		if (getClass() != obj.getClass())
 			return false;
 		LoaiDichVu other = (LoaiDichVu) obj;
-		if (maDichVu == null) {
-			if (other.maDichVu != null)
+		if (maLoaiDichVu == null) {
+			if (other.maLoaiDichVu != null)
 				return false;
-		} else if (!maDichVu.equals(other.maDichVu))
-			return false;
-		if (tenLoaiDichVu == null) {
-			if (other.tenLoaiDichVu != null)
-				return false;
-		} else if (!tenLoaiDichVu.equals(other.tenLoaiDichVu))
+		} else if (!maLoaiDichVu.equals(other.maLoaiDichVu))
 			return false;
 		return true;
 	}
-	
+
 	
 }

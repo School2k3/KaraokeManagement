@@ -15,20 +15,20 @@ import javax.swing.JScrollPane;
 public class CapNhatPhong_GUI extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtMaPhong, txtGia, txtTenPhong;
+	private JTextField txtMa;
+	private JTextField txtGia;
+	private JTextField txtTen;
 	private JTable tblPhong;
-	private JButton btnThem, btnSua, btnXoa, btnXoaTrang;
 	/**
 	 * Create the panel.
 	 */
 	public CapNhatPhong_GUI() {
-		// Thiết lập size cho giao diện
 		setSize(1600, 1055);
 		setLayout(null);
 		
 		JLabel lblTitle = new JLabel("Cập nhật phòng");
 		lblTitle.setFont(new Font("SansSerif", Font.BOLD, 40));
-		lblTitle.setBounds(603, 11, 393, 49);
+		lblTitle.setBounds(703, 11, 396, 59);
 		add(lblTitle);
 		
 		JLabel lblMaPhong = new JLabel("Mã phòng:");
@@ -36,60 +36,54 @@ public class CapNhatPhong_GUI extends JPanel {
 		lblMaPhong.setBounds(89, 118, 131, 48);
 		add(lblMaPhong);
 		
-		JLabel lblLoaiPhong = new JLabel("Loại phòng:");
-		lblLoaiPhong.setFont(new Font("SansSerif", Font.BOLD, 20));
-		lblLoaiPhong.setBounds(89, 192, 131, 48);
-		add(lblLoaiPhong);
+		JLabel lblLoai = new JLabel("Loại phòng:");
+		lblLoai.setFont(new Font("SansSerif", Font.BOLD, 20));
+		lblLoai.setBounds(89, 192, 131, 48);
+		add(lblLoai);
 		
-		JLabel lblTenPhong = new JLabel("Tên phòng:");
-		lblTenPhong.setFont(new Font("SansSerif", Font.BOLD, 20));
-		lblTenPhong.setBounds(907, 118, 109, 48);
-		add(lblTenPhong);
+		JLabel lblTen = new JLabel("Tên phòng:");
+		lblTen.setFont(new Font("SansSerif", Font.BOLD, 20));
+		lblTen.setBounds(907, 118, 109, 48);
+		add(lblTen);
 		
 		JLabel lblTrangThai = new JLabel("Trạng thái:");
 		lblTrangThai.setFont(new Font("SansSerif", Font.BOLD, 20));
 		lblTrangThai.setBounds(907, 192, 109, 48);
 		add(lblTrangThai);
 		
-		JLabel lblGia = new JLabel("Đơn giá:");
+		JLabel lblGia = new JLabel("�?ơn giá:");
 		lblGia.setFont(new Font("SansSerif", Font.BOLD, 20));
 		lblGia.setBounds(89, 268, 131, 48);
 		add(lblGia);
 		
-		btnThem = new JButton("Thêm");
+		JButton btnThem = new JButton("Thêm");
 		btnThem.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		btnThem.setBounds(247, 363, 117, 48);
+		btnThem.setBounds(183, 363, 203, 66);
 		btnThem.setBackground(new Color(217, 217, 217));
 		btnThem.setFocusable(false);
 		add(btnThem);
 		
-		btnSua = new JButton("Sửa");
+		JButton btnSua = new JButton("Sửa");
 		btnSua.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		btnSua.setBounds(578, 363, 109, 48);
-		btnSua.setBackground(new Color(217, 217, 217));
-		btnSua.setFocusable(false);
+		btnSua.setBounds(527, 363, 203, 66);
 		add(btnSua);
 		
-		btnXoa = new JButton("Xóa");
+		JButton btnXoa = new JButton("Xóa");
 		btnXoa.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		btnXoa.setBounds(884, 363, 109, 48);
-		btnXoa.setBackground(new Color(217, 217, 217));
-		btnXoa.setFocusable(false);
+		btnXoa.setBounds(860, 363, 203, 66);
 		add(btnXoa);
 		
-		btnXoaTrang = new JButton("Xóa trắng");
+		JButton btnXoaTrang = new JButton("Xóa trắng");
 		btnXoaTrang.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		btnXoaTrang.setBounds(1163, 363, 161, 48);
-		btnXoaTrang.setBackground(new Color(217, 217, 217));
-		btnXoaTrang.setFocusable(false);
+		btnXoaTrang.setBounds(1191, 363, 203, 66);
 		add(btnXoaTrang);
 		
-		txtMaPhong = new JTextField();
-		txtMaPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		lblMaPhong.setLabelFor(txtMaPhong);
-		txtMaPhong.setColumns(10);
-		txtMaPhong.setBounds(230, 126, 440, 32);
-		add(txtMaPhong);
+		txtMa = new JTextField();
+		txtMa.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		lblMaPhong.setLabelFor(txtMa);
+		txtMa.setColumns(10);
+		txtMa.setBounds(230, 126, 440, 32);
+		add(txtMa);
 		
 		txtGia = new JTextField();
 		txtGia.setFont(new Font("SansSerif", Font.PLAIN, 20));
@@ -97,18 +91,18 @@ public class CapNhatPhong_GUI extends JPanel {
 		txtGia.setBounds(230, 276, 440, 32);
 		add(txtGia);
 		
-		txtTenPhong = new JTextField();
-		txtTenPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		lblTenPhong.setLabelFor(txtTenPhong);
-		txtTenPhong.setColumns(10);
-		txtTenPhong.setBounds(1026, 126, 405, 32);
-		add(txtTenPhong);
+		txtTen = new JTextField();
+		txtTen.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		lblTen.setLabelFor(txtTen);
+		txtTen.setColumns(10);
+		txtTen.setBounds(1026, 126, 405, 32);
+		add(txtTen);
 		
-		JComboBox cmbLoaiPhong = new JComboBox();
-		lblLoaiPhong.setLabelFor(cmbLoaiPhong);
-		cmbLoaiPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		cmbLoaiPhong.setBounds(230, 200, 270, 32);
-		add(cmbLoaiPhong);
+		JComboBox cmbLoai = new JComboBox();
+		lblLoai.setLabelFor(cmbLoai);
+		cmbLoai.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		cmbLoai.setBounds(230, 200, 270, 32);
+		add(cmbLoai);
 		
 		JComboBox cmbTrangThai = new JComboBox();
 		lblTrangThai.setLabelFor(cmbTrangThai);
@@ -116,22 +110,20 @@ public class CapNhatPhong_GUI extends JPanel {
 		cmbTrangThai.setBounds(1026, 200, 270, 32);
 		add(cmbTrangThai);
 		
-		JScrollPane scrPhong = new JScrollPane();
-		scrPhong.setBounds(89, 459, 1439, 520);
-		add(scrPhong);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(89, 459, 1439, 520);
+		add(scrollPane);
 		
 		tblPhong = new JTable();
 		tblPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		scrPhong.setViewportView(tblPhong);
+		scrollPane.setViewportView(tblPhong);
 		tblPhong.setModel(new DefaultTableModel(
 				new Object[][] {
 				},
 				new String[] {
-					"Mã phòng", "Tên phòng", "Loại phòng", "Trạng thái", "Đơn giá"
+					"Mã phòng", "Tên phòng", "Loại phòng", "Trạng thái", "�?ơn giá"
 				}
 			));
-		tblPhong.getTableHeader().setBackground(new Color(120, 255, 239));
-		tblPhong.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 	}
 
 }

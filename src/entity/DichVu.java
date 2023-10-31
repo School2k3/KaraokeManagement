@@ -40,13 +40,10 @@ public class DichVu {
 		return donGia;
 	}
 	public void setMaDichVu(String maDichVu) throws Exception {
-		if(maDichVu.trim().equals("")) {
-			this.maDichVu = maDichVu;
-		}
-		else {
+		if(maDichVu.trim().equals(""))
+		this.maDichVu = maDichVu;
+		else
 			throw new Exception("Lỗi mã dịch vụ không được rỗng!");
-		}
-
 	}
 	public void setTenDichVu(String tenDichVu) throws Exception {
 		if(tenDichVu.trim().equals(""))
@@ -77,13 +74,13 @@ public class DichVu {
 				+ ", soLuongTon=" + soLuongTon + ", loaiDichVu=" + loaiDichVu
 				+ ", donGia=" + donGia + "]";
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(donGia);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result
+				+ ((maDichVu == null) ? 0 : maDichVu.hashCode());
 		return result;
 	}
 	@Override
@@ -95,14 +92,11 @@ public class DichVu {
 		if (getClass() != obj.getClass())
 			return false;
 		DichVu other = (DichVu) obj;
-		if (Double.doubleToLongBits(donGia) != Double
-				.doubleToLongBits(other.donGia))
+		if (maDichVu == null) {
+			if (other.maDichVu != null)
+				return false;
+		} else if (!maDichVu.equals(other.maDichVu))
 			return false;
 		return true;
 	}
-//	public DichVu(ResultSet rs) throws SQLException, Exception{
-//		this(rs.getString("maDichVu"), rs.getString("tenDichVu"), rs.getString("loaiDichVu"),
-//				rs.getInt("soLuongTon"), rs.getDouble("donGia"));
-//	}
-	
 }

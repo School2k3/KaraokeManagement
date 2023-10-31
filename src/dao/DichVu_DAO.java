@@ -138,36 +138,36 @@ public class DichVu_DAO {
 //        }
 //        return n > 0;
 //    }
-//    public ArrayList<DichVu> timByMa(String maDV) throws Exception {
-//		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
-//
-//		ConnectDB.getInstance();
-//		Connection con = ConnectDB.getConnection();
-//		PreparedStatement statement = null;
-//		try {
-//
-//			String sql = "select * from DichVu where maDichVu=?";
-//			statement = con.prepareStatement(sql);
-//			statement.setString(1, maDV);
-//			ResultSet rs = statement.executeQuery();
-//			while (rs.next()) {
-//				DichVu dv = new DichVu(rs);
-//				dsDV.add(dv);
-//			}
-//
-//		} catch (SQLException e) {
-//			// TODO: handle exception
-//			e.printStackTrace();
-//
-//		} finally {
-//			try {
-//				statement.close();
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		return dsDV;
-//	}
+    public ArrayList<DichVu> timByMa(String maDV ) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+
+			String sql = "select * from DichVu where maDichVu=?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, maDV);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				DichVu dv = new DichVu(maDV);
+				dsDV.add(dv);
+			}
+
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+
+		} finally {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return dsDV;
+	}
     //tim theo ma
 //    public ArrayList<DichVu> getListDichVuByMa(String maDichVu) throws Exception {
 //		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();

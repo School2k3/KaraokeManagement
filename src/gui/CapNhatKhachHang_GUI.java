@@ -2,25 +2,36 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 	private JLabel lblCapNhatKhachHang, lblMaKhachHang, lblHoTenKhachHang, lblSoDienThoai, lblCCCD, lblGioiTinh;
 	private JTextField txtMaKhachHang, txtHoTenKhachHang, txtSoDienThoai, txtCCCD;
 	private JComboBox<String> cmbGioiTinh;
-	private JButton btnThem, btnSua, btnLamMoi;
+	private JButton btnDangXuat, btnThem, btnSua, btnLamMoi;
 	private JScrollPane scrKhachHang;
 	private DefaultTableModel modelKhachHang;
 	private JTable tblKhachHang;
@@ -161,7 +172,8 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 		scrKhachHang.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblKhachHang.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblKhachHang.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
-			
+		
+		
 		// Set Size Width ColumnTable
 //		tblKhachHang.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 //		tblKhachHang.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -169,7 +181,8 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 //		tblKhachHang.getColumnModel().getColumn(2).setPreferredWidth(150);
 //		tblKhachHang.getColumnModel().getColumn(3).setPreferredWidth(220);
 //		tblKhachHang.getColumnModel().getColumn(4).setPreferredWidth(210);
-			
+		
+		
 		// Add Sự kiện cho các button
 //		btnThem.addActionListener(this);
 //		btnSua.addActionListener(this);

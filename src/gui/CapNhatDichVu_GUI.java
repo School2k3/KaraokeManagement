@@ -17,8 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.ScrollPaneConstants;
-
 import dao.DichVu_DAO;
 import entity.DichVu;
 
@@ -29,20 +27,20 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTextField txtMaDichVu, txtTenDichVu, txtDonGia, txtSoLuongTon;
+	private JTextField txtMaDichVu,txtTenDichVu,txtDonGia,txtSoLuongTon;
 	private JTable tblDichVu;
 	private JButton btnThem, btnSua, btnXoa, btnXoaTrang;
 	private JScrollPane scrDichVu;
 	private JComboBox cmbLoai;
 	private DichVu_DAO dv_dao;
-	private DefaultTableModel modelDichVu;
+	private DefaultTableModel model;
 	private ArrayList<DichVu> dsDV;
+
 	/**
 	 * Create the panel.
 	 * @throws Exception 
 	 */
 	public CapNhatDichVu_GUI() throws Exception {
-		
 		dv_dao= new DichVu_DAO();
 		setSize(1600,1050);
 		setLayout(null);
@@ -61,7 +59,7 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		lblLoaiDichVu.setFont(new Font("SansSerif", Font.BOLD, 20));
 		add(lblLoaiDichVu);
 		
-		JLabel lblTenDichVu = new JLabel("Tên dịch vụ:");
+		JLabel lblTenDichVu = new JLabel("Tên loại dịch vụ:");
 		lblTenDichVu.setBounds(726, 140, 132, 62);
 		lblTenDichVu.setFont(new Font("SansSerif", Font.BOLD, 20));
 		add(lblTenDichVu);
@@ -71,7 +69,7 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		lblSoLuongTon.setFont(new Font("SansSerif", Font.BOLD, 20));
 		add(lblSoLuongTon);
 		
-		JLabel lblDonGia = new JLabel("Đơn giá:");
+		JLabel lblDonGia = new JLabel("Đơn giá");
 		lblDonGia.setBounds(166, 297, 132, 62);
 		lblDonGia.setFont(new Font("SansSerif", Font.BOLD, 20));
 		add(lblDonGia);
@@ -100,9 +98,8 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		txtSoLuongTon.setColumns(10);
 		add(txtSoLuongTon);
 		
-		JComboBox cmbLoai = new JComboBox();
+		cmbLoai = new JComboBox();
 		cmbLoai.setBounds(301, 228, 233, 32);
-		cmbLoai.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5"}));
 		cmbLoai.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		add(cmbLoai);
 		
@@ -130,11 +127,18 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		btnXoaTrang.setFocusable(false);
 		add(btnXoaTrang);
 		
+		//set color btn
+		btnThem.setBackground(new Color(217, 217, 217));
+		btnSua.setBackground(new Color(217, 217, 217));
+		btnXoa.setBackground(new Color(217, 217, 217));
+		btnXoaTrang.setBackground(new Color(217, 217, 217));
+		
+
 		//table
 		String[] header = { "Mã dịch vụ", "Tên dịch vụ", "Loại dịch vụ", "Số lượng tồn", "Đơn giá" };
-		modelDichVu = new DefaultTableModel(header, 0);
+		model = new DefaultTableModel(header, 0);
 
-		add(scrDichVu = new JScrollPane(tblDichVu = new JTable(modelDichVu),
+		add(scrDichVu = new JScrollPane(tblDichVu = new JTable(model),
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 				BorderLayout.CENTER);
 		scrDichVu.setBounds(102, 521, 1387, 500);
@@ -143,7 +147,9 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		scrDichVu.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblDichVu.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblDichVu.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-		DocDuLieu();
+		docDuLieu();
+
+		
 		
 		//them su kien
 		btnThem.addActionListener(this);
@@ -151,26 +157,14 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		btnXoa.addActionListener(this);
 		btnXoaTrang.addActionListener(this);
 	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		Object o = e.getSource();
-		if(o.equals(btnXoaTrang)){
-			XoaTrang();
-		}
-		else if (o.equals(btnThem)) {
-			
-		}
-	}
-	
-	public void DocDuLieu() throws Exception {
+	public void docDuLieu() throws Exception {
 		dsDV = dv_dao.layThongTin();
-		modelDichVu.setRowCount(0);
+		model.setRowCount(0);
 		for (DichVu dv : dsDV) {
-			modelDichVu.addRow(new Object[] { dv.getMaDichVu(), dv.getTenDichVu(),dv.getLoaiDichVu().getTenLoaiDichVu(), dv.getSoLuongTon(), dv.getDonGia() });
+			model.addRow(new Object[] { dv.getMaDichVu(), dv.getTenDichVu(),dv.getLoaiDichVu().getTenLoaiDichVu(), dv.getSoLuongTon(), dv.getDonGia() });
 		}
 	}
-	public void XoaTrang(){
+	public void xoaTrang(){
 		txtMaDichVu.setText("");
 		txtMaDichVu.requestFocus();
 		txtTenDichVu.setText("");
@@ -178,5 +172,29 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		txtSoLuongTon.setText("");
 		cmbLoai.setSelectedIndex(0);
 	}
-
+	public void them(){
+		
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object o= e.getSource();
+		if(o.equals(btnXoaTrang)){
+			xoaTrang();
+		}
+		else if (o.equals(btnThem)) {
+			
+		}
+		else if (o.equals(btnSua)) {
+			
+		}else {
+				
+		}
+		
+		
+	}
+	public boolean validData(){
+		
+		return true;
+		
+	}
 }
