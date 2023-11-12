@@ -29,13 +29,13 @@ public class NhanVien_DAO {
 			while(rs.next()) {
 				String maNhanVien = rs.getString(1);
 				String hoTenNhanVien = rs.getString(2);
-				boolean gioiTinh = rs.getBoolean(3);
+				String gioiTinh = rs.getString(3);
 				int namSinh = rs.getInt(4);
 				String diaChi = rs.getString(5);
 				String soDienThoai = rs.getString(6);
 				String canCuocCongDan = rs.getString(7);
 				String matKhau = rs.getString(8);
-				boolean chucVu = rs.getBoolean(9);
+				String chucVu = rs.getString(9);
 				
 				NhanVien nhanVien = new NhanVien(maNhanVien, hoTenNhanVien, gioiTinh, namSinh, diaChi, soDienThoai, canCuocCongDan, matKhau, chucVu);
 				arlNhanVien.add(nhanVien);

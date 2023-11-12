@@ -2,45 +2,58 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
+import connectDB.ConnectDB;
+import dao.KhachHang_DAO;
+import entity.KhachHang;
+
+public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, MouseListener, KeyListener {
 	private JLabel lblCapNhatKhachHang, lblMaKhachHang, lblHoTenKhachHang, lblSoDienThoai, lblCCCD, lblGioiTinh;
 	private JTextField txtMaKhachHang, txtHoTenKhachHang, txtSoDienThoai, txtCCCD;
 	private JComboBox<String> cmbGioiTinh;
-	private JButton btnDangXuat, btnThem, btnSua, btnLamMoi;
+	private JButton btnThem, btnSua, btnLamMoi;
 	private JScrollPane scrKhachHang;
 	private DefaultTableModel modelKhachHang;
 	private JTable tblKhachHang;
 	private static final long serialVersionUID = 1L;
+	private ArrayList<KhachHang> arlKhachHang;
+	private KhachHang_DAO khachHang_DAO;
 
 	/**
 	 * Create the panel.
+	 * 
+	 * @throws Exception
 	 */
-	public CapNhatKhachHang_GUI() {
+	public CapNhatKhachHang_GUI() throws Exception {
+		try {
+			ConnectDB.getInstance().connect();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		khachHang_DAO = new KhachHang_DAO();
 		setSize(1600, 1055);
 		setLayout(null);
 		// Phần cập nhật khách hàng
@@ -49,72 +62,71 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 		lblCapNhatKhachHang.setFont(new Font("SansSerif", Font.BOLD, 40));
 //		pnlCapNhatKhachHang.add(lblCapNhatKhachHang);
 		add(lblCapNhatKhachHang);
-		
+
 		// Thêm Label Mã khách hàng
 		lblMaKhachHang = new JLabel("Mã khách hàng");
 		lblMaKhachHang.setBounds(55, 98, 150, 30);
 		lblMaKhachHang.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblMaKhachHang);
 		add(lblMaKhachHang);
-		
+
 		// Thêm Label Họ tên khách hàng
 		lblHoTenKhachHang = new JLabel("Họ tên khách hàng");
 		lblHoTenKhachHang.setBounds(55, 170, 200, 30);
 		lblHoTenKhachHang.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblHoTenKhachHang);
 		add(lblHoTenKhachHang);
-		
+
 		// Thêm Label Số điện thoại
 		lblSoDienThoai = new JLabel("Số điện thoại");
 		lblSoDienThoai.setBounds(882, 100, 150, 30);
 		lblSoDienThoai.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblSoDienThoai);
 		add(lblSoDienThoai);
-		
+
 		// Thêm Label Căn cước công dân
 		lblCCCD = new JLabel("CCCD");
 		lblCCCD.setBounds(882, 170, 150, 30);
 		lblCCCD.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblCCCD);
 		add(lblCCCD);
-		
+
 		// Thêm Label Giới tính
 		lblGioiTinh = new JLabel("Giới tính");
 		lblGioiTinh.setBounds(55, 242, 150, 30);
 		lblGioiTinh.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblGioiTinh);
 		add(lblGioiTinh);
-		
+
 		// Thêm TextField Mã khách hàng
 		txtMaKhachHang = new JTextField();
 		txtMaKhachHang.setBounds(265, 100, 300, 30);
 		txtMaKhachHang.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+		txtMaKhachHang.setEditable(false);
 //		pnlCapNhatKhachHang.add(txtMaKhachHang);
 		add(txtMaKhachHang);
-		
+
 		// Thêm TextField Họ tên khách hàng
 		txtHoTenKhachHang = new JTextField();
 		txtHoTenKhachHang.setBounds(265, 170, 300, 30);
 		txtHoTenKhachHang.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 //		pnlCapNhatKhachHang.add(txtHoTenKhachHang);
 		add(txtHoTenKhachHang);
-		
+
 		// Thêm TextField Số điện thoại
 		txtSoDienThoai = new JTextField();
 		txtSoDienThoai.setBounds(1062, 102, 300, 30);
 		txtSoDienThoai.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 //		pnlCapNhatKhachHang.add(txtSoDienThoai);
 		add(txtSoDienThoai);
-		
-		
+
 		// Thêm TextField Cân cước công dân
 		txtCCCD = new JTextField();
 		txtCCCD.setBounds(1062, 172, 300, 30);
 		txtCCCD.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 //		pnlCapNhatKhachHang.add(txtCCCD);
 		add(txtCCCD);
-		
-		
+
 		// Thêm combobox Giới tính
 		cmbGioiTinh = new JComboBox<String>();
 		cmbGioiTinh.setBounds(265, 242, 300, 30);
@@ -123,13 +135,13 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 		cmbGioiTinh.setFocusable(false);
 //		pnlCapNhatKhachHang.add(cmbGioiTinh);
 		add(cmbGioiTinh);
-		
+
 		// Add item cho Combobox
 		cmbGioiTinh.addItem("Nam");
 		cmbGioiTinh.addItem("Nữ");
-		
+
 		// Thêm Các button
-		
+
 		// Button Thêm
 		btnThem = new JButton("Thêm");
 		btnThem.setBounds(620, 245, 200, 45);
@@ -138,7 +150,7 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 		btnThem.setFocusable(false);
 //		pnlCapNhatKhachHang.add(btnThem);
 		add(btnThem);
-		
+
 		// Button Sửa
 		btnSua = new JButton("Sửa");
 		btnSua.setBounds(934, 245, 200, 45);
@@ -147,7 +159,7 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 		btnSua.setFocusable(false);
 //		pnlCapNhatKhachHang.add(btnSua);
 		add(btnSua);
-		
+
 		// Button Làm mới
 		btnLamMoi = new JButton("Làm mới");
 		btnLamMoi.setBounds(1231, 245, 200, 45);
@@ -156,24 +168,24 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 		btnLamMoi.setFocusable(false);
 //		pnlCapNhatKhachHang.add(btnLamMoi);
 		add(btnLamMoi);
-		
+
 		// Tạo Table thông tin khách hàng
-		String[] header = {
-				"Mã khách hàng", "Tên khách hàng", "Giới tính", "Số điện thoại", "Căn cước công dân" 
-		};
+		String[] header = { "Mã khách hàng", "Tên khách hàng", "Giới tính", "Số điện thoại", "Căn cước công dân" };
 		modelKhachHang = new DefaultTableModel(header, 0);
-		
-		add(scrKhachHang = new JScrollPane(tblKhachHang = new JTable(modelKhachHang), 
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+
+		add(scrKhachHang = new JScrollPane(tblKhachHang = new JTable(modelKhachHang),
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+				BorderLayout.CENTER);
 		scrKhachHang.setBounds(55, 343, 1483, 622);
 		scrKhachHang.setBackground(new Color(120, 255, 239));
 		scrKhachHang.getViewport().setBackground(Color.WHITE);
 //		scrKhachHang.setViewportBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		scrKhachHang.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblKhachHang.getTableHeader().setBackground(new Color(120, 255, 239));
-		tblKhachHang.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+		tblKhachHang.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
+		tblKhachHang.setRowHeight(50);
 		
-		
+
 		// Set Size Width ColumnTable
 //		tblKhachHang.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 //		tblKhachHang.getColumnModel().getColumn(0).setPreferredWidth(200);
@@ -181,19 +193,328 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener {
 //		tblKhachHang.getColumnModel().getColumn(2).setPreferredWidth(150);
 //		tblKhachHang.getColumnModel().getColumn(3).setPreferredWidth(220);
 //		tblKhachHang.getColumnModel().getColumn(4).setPreferredWidth(210);
-		
-		
+
 		// Add Sự kiện cho các button
-//		btnThem.addActionListener(this);
-//		btnSua.addActionListener(this);
-//		btnLamMoi.addActionListener(this);
+		btnThem.addActionListener(this);
+		btnSua.addActionListener(this);
+		btnLamMoi.addActionListener(this);
 //		btnDangXuat.addActionListener(this);
+
+		// Thêm sự kiện mouseListenner
+		tblKhachHang.addMouseListener(this);
+
+		// Add sự kiện nút enter
+		txtMaKhachHang.addKeyListener(this);
+		txtHoTenKhachHang.addKeyListener(this);
+		txtSoDienThoai.addKeyListener(this);
+		txtCCCD.addKeyListener(this);
+		btnThem.addKeyListener(this);
+
+		// Load dữ liệu từ database vào table
+		loadDanhSachKhachHang();
+		docDuLieuVaoTable();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		Object o = e.getSource();
+		if (o.equals(btnThem)) {
+			if(txtMaKhachHang.getText().trim().length() < 0) {
+				try {
+					txtMaKhachHang.setText(generatesIncrementalCode());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}else {	
+			
+			if (validData()) {
+				try {
+					txtMaKhachHang.setText(generatesIncrementalCode());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				String maKhachHang = txtMaKhachHang.getText().trim();
+				String hoTenKhachHang = txtHoTenKhachHang.getText().trim();
+				String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
+				String soDienThoai = txtSoDienThoai.getText().trim();
+				String canCuocCongDan = txtCCCD.getText().trim();
+				try {
+					KhachHang khachHang = new KhachHang(maKhachHang, hoTenKhachHang, gioiTinh, soDienThoai,
+							canCuocCongDan);
+					try {
+						if (khachHang_DAO.insert(khachHang)) {
+							modelKhachHang.addRow(new Object[] { khachHang.getMaKhachHang(),
+									khachHang.getHoTenKhachHang(), khachHang.isGioiTinh(), khachHang.getSoDienThoai(),
+									khachHang.getCanCuocCongDan() });
+							JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công");
+							// Thông báo cho biết rằng tất cả giá trị ô trong các hàng của bảng có thể đã
+							// thay đổi.
+							modelKhachHang.fireTableDataChanged();
+							loadDanhSachKhachHang();
+						} else {
+							JOptionPane.showMessageDialog(this, "Mã khách hàng đã có (Trùng mã)");
+						}
+					} catch (SQLException e2) {
+						// TODO: handle exception
+						JOptionPane.showMessageDialog(this, "Thêm khách hàng không thành công");
+					}
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+				}
+			}
+			}
+		} else if (o.equals(btnSua)) {
+			String maKhachHang = txtMaKhachHang.getText().trim();
+			String hoTenKhachHang = txtHoTenKhachHang.getText().trim();
+			String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
+			String soDienThoai = txtSoDienThoai.getText().trim();
+			String canCuocCongDan = txtCCCD.getText().trim();
+			int row = tblKhachHang.getSelectedRow();
+			if(row >= 0) {
+				try {
+					KhachHang khachHang = new KhachHang(maKhachHang, hoTenKhachHang, gioiTinh, soDienThoai, canCuocCongDan);
+					try {
+						boolean capNhat = khachHang_DAO.update(khachHang);
+						if(capNhat) {
+							modelKhachHang.setValueAt(khachHang.getMaKhachHang(), row, 0);
+							modelKhachHang.setValueAt(khachHang.getHoTenKhachHang(), row, 1);
+							modelKhachHang.setValueAt(khachHang.isGioiTinh(), row, 2);
+							modelKhachHang.setValueAt(khachHang.getSoDienThoai(), row, 3);
+							modelKhachHang.setValueAt(khachHang.getCanCuocCongDan(), row, 4);
+							JOptionPane.showMessageDialog(this, "Cập nhật khách hàng thành công");
+							modelKhachHang.fireTableDataChanged();
+							loadDanhSachKhachHang();
+						}else {
+							JOptionPane.showMessageDialog(this, "Cập nhật khách hàng không thành công");
+						}
+					} catch (Exception e2) {
+						// TODO: handle exception
+						e2.printStackTrace();
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}else {
+				JOptionPane.showMessageDialog(this, "Chọn dòng muốn sửa");
+			}
+		} else if (o.equals(btnLamMoi)) {
+			refeshTextField();
+		}
 	}
 
+	/**
+	 * Hàm tải dữ liệu từ database
+	 */
+	private void loadDanhSachKhachHang() throws Exception {
+		/*
+		 * Lấy dữ liệu từ database
+		 */
+		arlKhachHang = khachHang_DAO.getAllTableKhachHang();
+	}
+
+	/**
+	 * Hàm đọc dữ liệu vào database addRow: Thêm các dòng dữ liệu từ database vào
+	 * table
+	 * 
+	 * @throws Exception
+	 */
+	public void docDuLieuVaoTable() throws Exception {
+		/**
+		 * Nếu arlKhachHang(danh sách khách hàng) rỗng và độ lớn danh sách <= 0 Thì
+		 * không trả về gì cả Ngược lại duyệt danh sách khách hàng bằng vòng for Sau đó
+		 * thêm dòng dữ liệu đối tượng khách hàng với các thuộc tính liên quan vào model
+		 */
+		if (arlKhachHang == null || arlKhachHang.size() <= 0)
+			return;
+		for (KhachHang khachHang : arlKhachHang) {
+			modelKhachHang.addRow(new Object[] { khachHang.getMaKhachHang(), khachHang.getHoTenKhachHang(),
+					khachHang.isGioiTinh(), khachHang.getSoDienThoai(), khachHang.getCanCuocCongDan() });
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if (o.equals(tblKhachHang)) {
+			/*
+			 * Tạo biến row có kiểu dữ liệu int Để table Khách hàng lấy dòng được chọn
+			 */
+			int row = tblKhachHang.getSelectedRow();
+			/*
+			 * Lấy dữ liệu từ dòng được chọn cột 0 là cột mã khách hàng Đưa lên textField
+			 * txtKhachHang
+			 */
+			txtMaKhachHang.setText(modelKhachHang.getValueAt(row, 0).toString());
+			/*
+			 * Lấy dữ liệu từ dòng được chọn cột 1 là cột họ tên khách hàng Đưa lên
+			 * textField txtHoTenKhachHang
+			 */
+			txtHoTenKhachHang.setText(modelKhachHang.getValueAt(row, 1).toString());
+			/*
+			 * Lấy dữ liệu từ dòng được chọn cột 2 là cột giới tính Đưa lên combobox
+			 * cmbGioiTinh
+			 */
+			cmbGioiTinh.setSelectedItem(modelKhachHang.getValueAt(row, 2).toString());
+			/*
+			 * Lấy dữ liệu từ dòng được chọn cột 3 là cột số điện thoại Đưa lên textField
+			 * txtSoDienThoai
+			 */
+			txtSoDienThoai.setText(modelKhachHang.getValueAt(row, 3).toString());
+			/*
+			 * Lấy dữ liệu từ dòng được chọn cột 4 là cột CCCD Đưa lên textField txtCCCD
+			 */
+			txtCCCD.setText(modelKhachHang.getValueAt(row, 4).toString());
+
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	public void refeshTextField() {
+		txtMaKhachHang.setText("");
+		txtHoTenKhachHang.setText("");
+		cmbGioiTinh.setSelectedIndex(0);
+		txtSoDienThoai.setText("");
+		txtCCCD.setText("");
+		txtMaKhachHang.requestFocus();
+	}
+
+	public boolean validData() {
+		String maKhachHang = txtMaKhachHang.getText().trim();
+		String hoTenKhachHang = txtHoTenKhachHang.getText().trim();
+		String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
+		String soDienThoai = txtSoDienThoai.getText().trim();
+		String canCuocCongDan = txtCCCD.getText().trim();
+
+//		if (!(maKhachHang.length() > 0)) {
+//			JOptionPane.showMessageDialog(this, "Error: Mã khách hàng không được để trống");
+//			return false;
+//		} else 
+//		if (!maKhachHang.matches("(KH)\\d{5}")) {
+//			JOptionPane.showMessageDialog(this,
+//					"Error: Mã khách hàng không hợp lệ. Nhập lại mã khách hàng theo VD: KH00001");
+//			return false;
+//		} else {
+		if(maKhachHang.matches("(KH)\\d{5}")) {
+			for (KhachHang khachHang : arlKhachHang) {
+				if (khachHang.getMaKhachHang().equalsIgnoreCase(maKhachHang)) {
+					JOptionPane.showMessageDialog(this, "Error: Mã khách hàng đã tồn tại (Trùng mã khách hàng)");
+					return false;
+				}
+			}
+		}
+
+		if (!((hoTenKhachHang).length() > 0)) {
+			JOptionPane.showMessageDialog(this, "Error: Tên khách hàng không được để trống");
+			return false;
+		}
+//			else if () {
+//			JOptionPane.showMessageDialog(this,
+//					"Error: Tên khách hàng không lệ. Nhập lại họ tên khách hàng theo VD: Trần Anh Tiến, Alex Đặng, Gon");
+//			return false;
+//		}
+
+		if (!(soDienThoai.length() > 0)) {
+			JOptionPane.showMessageDialog(this, "Error: Số điện thoại không được để rỗng");
+			return false;
+		} else if (!soDienThoai.matches("")) {
+
+		}
+		if (!(canCuocCongDan.length() > 0)) {
+			JOptionPane.showMessageDialog(this, "Error: Căn cước không được để rỗng");
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		Object key = e.getKeyCode();
+		// Bắt sự kiện nhấn phím enter nhấn btnThem
+		if (o.equals(txtMaKhachHang) || o.equals(txtHoTenKhachHang) || o.equals(txtSoDienThoai) || o.equals(txtCCCD)) {
+			if (key.equals(KeyEvent.VK_ENTER)) {
+				btnThem.doClick();
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	// Hàm phát sinh mã tăng dần
+	public String generatesIncrementalCode() throws Exception {
+
+		String maKhachHang = "";
+		long n = khachHang_DAO.getAllTableKhachHang().size();
+		if (n < 9) {
+			do {
+				n += 1;
+				maKhachHang = "KH0000" + String.valueOf(n);
+				arlKhachHang = khachHang_DAO.getAllTableKhachHang();
+			} while (arlKhachHang.contains(maKhachHang));
+		} else if (n < 99) {
+			do {
+				n += 1;
+				maKhachHang = "KH000" + String.valueOf(n);
+				arlKhachHang = khachHang_DAO.getAllTableKhachHang();
+			} while (arlKhachHang.contains(maKhachHang));
+		} else if (n < 999) {
+			do {
+				n += 1;
+				maKhachHang = "KH00" + String.valueOf(n);
+				arlKhachHang = khachHang_DAO.getAllTableKhachHang();
+			} while (arlKhachHang.contains(maKhachHang));
+		} else if (n < 9999) {
+			do {
+				n += 1;
+				maKhachHang = "KH0" + String.valueOf(n);
+				arlKhachHang = khachHang_DAO.getAllTableKhachHang();
+			} while (arlKhachHang.contains(maKhachHang));
+		} else if (n < 99999) {
+			do {
+				n += 1;
+				maKhachHang = "KH" + String.valueOf(n);
+				arlKhachHang = khachHang_DAO.getAllTableKhachHang();
+			} while (arlKhachHang.contains(maKhachHang));
+		}
+		return maKhachHang;
+	}
 }

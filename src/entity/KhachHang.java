@@ -7,7 +7,7 @@ import java.util.Objects;
 public class KhachHang {
 	private String maKhachHang;
 	private String hoTenKhachHang;
-	private boolean gioiTinh;
+	private String gioiTinh;
 	private String soDienThoai;
 	private String canCuocCongDan;
 
@@ -20,7 +20,20 @@ public class KhachHang {
 		setMaKhachHang(maKhachHang);
 	}
 
-	public KhachHang(String maKhachHang, String hoTenKhachHang, boolean gioiTinh, String soDienThoai,
+	public KhachHang(String maKhachHang, String hoTenKhachHang) throws Exception {
+		super();
+		setMaKhachHang(maKhachHang);
+		setHoTenKhachHang(hoTenKhachHang);
+	}
+
+	public KhachHang(String maKhachHang, String hoTenKhachHang, String soDienThoai) throws Exception {
+		super();
+		setMaKhachHang(maKhachHang);
+		setHoTenKhachHang(hoTenKhachHang);
+		setSoDienThoai(soDienThoai);
+	}
+
+	public KhachHang(String maKhachHang, String hoTenKhachHang, String gioiTinh, String soDienThoai,
 			String canCuocCongDan) throws Exception {
 		super();
 		setMaKhachHang(maKhachHang);
@@ -54,12 +67,12 @@ public class KhachHang {
 		}
 	}
 
-	public boolean isGioiTinh() {
+	public String isGioiTinh() {
 		return gioiTinh;
 	}
 
-	public void setGioiTinh(boolean gioiTinh) {
-		if (gioiTinh == true || gioiTinh == false) {
+	public void setGioiTinh(String gioiTinh) {
+		if (!gioiTinh.trim().equals("")) {
 			this.gioiTinh = gioiTinh;
 		}
 	}
@@ -112,7 +125,7 @@ public class KhachHang {
 	}
 
 	public KhachHang(ResultSet rs) throws SQLException, Exception {
-		this(rs.getString("maKhachHang"), rs.getString("hoTenKhachHang"), rs.getBoolean("gioiTinh"),
+		this(rs.getString("maKhachHang"), rs.getString("hoTenKhachHang"), rs.getString("gioiTinh"),
 				rs.getString("soDienThoai"), rs.getString("canCuocCongDan"));
 	}
 }

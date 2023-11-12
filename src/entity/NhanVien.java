@@ -5,13 +5,13 @@ import java.util.Objects;
 public class NhanVien {
 	private String maNhanVien;
 	private String hoTenNhanVien;
-	private boolean gioiTinh;
+	private String gioiTinh;
 	private int namSinh;
 	private String diaChi;
 	private String soDienThoai;
 	private String canCuocCongDan;
 	private String matKhau;
-	private boolean chucVu;
+	private String chucVu;
 	public NhanVien() {
 		super();
 	}
@@ -19,8 +19,8 @@ public class NhanVien {
 		super();
 		setMaNhanVien(maNhanVien);
 	}
-	public NhanVien(String maNhanVien, String hoTenNhanVien, boolean gioiTinh, int namSinh, String diaChi,
-			String soDienThoai, String canCuocCongDan, String matKhau, boolean chucVu) throws Exception{
+	public NhanVien(String maNhanVien, String hoTenNhanVien, String gioiTinh, int namSinh, String diaChi,
+			String soDienThoai, String canCuocCongDan, String matKhau, String chucVu) throws Exception{
 		super();
 		setMaNhanVien(maNhanVien);
 		setHoTenNhanVien(hoTenNhanVien);
@@ -52,11 +52,11 @@ public class NhanVien {
 			throw new Exception("Họ tên nhân viên không được để rỗng");
 		}
 	}
-	public boolean isGioiTinh() {
+	public String isGioiTinh() {
 		return gioiTinh;
 	}
-	public void setGioiTinh(boolean gioiTinh) {
-		if(gioiTinh == true || gioiTinh == false) {
+	public void setGioiTinh(String gioiTinh) {
+		if(!gioiTinh.trim().equals("")) {
 			this.gioiTinh = gioiTinh;
 		}
 	}
@@ -110,11 +110,11 @@ public class NhanVien {
 			throw new Exception("Mật khẩu không được để rỗng");
 		}
 	}
-	public boolean isChucVu() {
+	public String isChucVu() {
 		return chucVu;
 	}
-	public void setChucVu(boolean chucVu) {
-		if(chucVu == true || chucVu == false) {
+	public void setChucVu(String chucVu) {
+		if(!chucVu.trim().equals("")) {
 			this.chucVu = chucVu;
 		}
 	}

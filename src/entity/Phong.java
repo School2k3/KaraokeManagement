@@ -15,6 +15,18 @@ public class Phong {
 		super();
 		this.maPhong = maPhong;
 	}
+	
+	public Phong(String maPhong, String tenPhong) {
+		super();
+		this.maPhong = maPhong;
+		this.tenPhong = tenPhong;
+	}
+	
+	public Phong(String maPhong, double donGia) {
+		super();
+		this.maPhong = maPhong;
+		this.donGia = donGia;
+	}
 	public Phong(String maPhong, String tenPhong, String trangThai, LoaiPhong loaiPhong, double donGia) {
 		super();
 		this.maPhong = maPhong;

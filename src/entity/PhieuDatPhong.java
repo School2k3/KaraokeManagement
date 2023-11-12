@@ -1,17 +1,17 @@
 package entity;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class PhieuDatPhong {
 	private String maPhieuDat;
 	private KhachHang khachHang;
 	private NhanVien nhanVien;
-	private Date ngayLap;
+	private Timestamp ngayLap;
 	private String trangThai;
 	public PhieuDatPhong() {
 		super();
 	}
-	public PhieuDatPhong(String maPhieuDat, KhachHang khachHang, NhanVien nhanVien, Date ngayLap, String trangThai) {
+	public PhieuDatPhong(String maPhieuDat, KhachHang khachHang, NhanVien nhanVien, Timestamp ngayLap, String trangThai) {
 		super();
 		this.maPhieuDat = maPhieuDat;
 		this.khachHang = khachHang;
@@ -46,10 +46,10 @@ public class PhieuDatPhong {
 	public void setNhanVien(NhanVien nhanVien) {
 		this.nhanVien = nhanVien;
 	}
-	public Date getNgayLap() {
+	public Timestamp getNgayLap() {
 		return ngayLap;
 	}
-	public void setNgayLap(Date ngayLap) throws Exception {
+	public void setNgayLap(Timestamp ngayLap) throws Exception {
 		if (ngayLap != null) {
 			this.ngayLap = ngayLap;
 		}

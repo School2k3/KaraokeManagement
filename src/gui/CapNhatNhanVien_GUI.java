@@ -7,6 +7,10 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,21 +31,37 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class CapNhatNhanVien_GUI extends JPanel {
+import connectDB.ConnectDB;
+import dao.NhanVien_DAO;
+import entity.KhachHang;
+import entity.NhanVien;
+
+public class CapNhatNhanVien_GUI extends JPanel implements ActionListener, MouseListener{
 
 	private static final long serialVersionUID = 1L;
 	private JLabel lblCapNhatNhanVien, lblMaNhanVien, lblHoTenNhanVien, 
 					lblSoDienThoai, lblCCCD, lblGioiTinh, lblNamSinh, lblDiaChi, lblMatKhau, lblChucVu;
 	private JTextField txtMaNhanVien, txtHoTenNhanVien, txtSoDienThoai, txtCCCD, txtNamSinh, txtDiaChi, txtMatKhau;
 	private JComboBox cmbGioiTinh, cmbChucVu;
-	private JButton btnDangXuat, btnThem, btnSua, btnLamMoi;
+	private JButton btnThem, btnSua, btnLamMoi;
 	private JScrollPane scrNhanVien;
 	private DefaultTableModel modelNhanVien;
 	private JTable tblNhanVien;
+	private ArrayList<NhanVien> arlNhanVien;
+	private NhanVien_DAO nhanVien_DAO;
 	/**
 	 * Create the panel.
+	 * @throws Exception 
 	 */
-	public CapNhatNhanVien_GUI() {
+	public CapNhatNhanVien_GUI() throws Exception {
+		try {
+			ConnectDB.getInstance().connect();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		nhanVien_DAO = new NhanVien_DAO();
+		
 		// Phần cập nhật nhân viên
 		setSize(1600, 1055);
 		setLayout(null);
@@ -254,6 +274,148 @@ public class CapNhatNhanVien_GUI extends JPanel {
 //		tblNhanVien.getColumnModel().getColumn(6).setPreferredWidth(120);
 //		tblNhanVien.getColumnModel().getColumn(7).setPreferredWidth(140);
 //		tblNhanVien.getColumnModel().getColumn(8).setPreferredWidth(145);
+	
+		// Load dữ liệu từ database vào table
+		loadDanhSachNhanVien();
+		docDuLieuVaoTable();
+		
+		// Thêm sự kiện
+		// Các button
+		btnThem.addActionListener(this);
+		btnSua.addActionListener(this);
+		btnLamMoi.addActionListener(this);
+		
+		// Thêm sự kiện mouseListener
+		tblNhanVien.addMouseListener(this);
 	}
 
+	
+	
+	/**
+	 * Hàm tải dữ liệu từ database
+	 */
+	private void loadDanhSachNhanVien() throws Exception {
+		/*
+		 * Lấy dữ liệu từ database
+		 */
+		arlNhanVien = nhanVien_DAO.getAllTableNhanVien();
+	}
+
+	/**
+	 * Hàm đọc dữ liệu vào database addRow: Thêm các dòng dữ liệu từ database vào
+	 * table
+	 * 
+	 * @throws Exception
+	 */
+	public void docDuLieuVaoTable() throws Exception {
+		/**
+		 * Nếu arlNhanVien(danh sách nhân viên) rỗng và độ lớn danh sách <= 0 Thì
+		 * không trả về gì cả Ngược lại duyệt danh sách nhân viên bằng vòng for Sau đó
+		 * thêm dòng dữ liệu đối tượng nhân viên với các thuộc tính liên quan vào model
+		 */
+		if (arlNhanVien == null || arlNhanVien.size() <= 0)
+			return;
+		for (NhanVien nhanVien : arlNhanVien) {
+			modelNhanVien.addRow(new Object[] {
+					nhanVien.getMaNhanVien(), nhanVien.getHoTenNhanVien(), nhanVien.isGioiTinh(), nhanVien.getNamSinh(), nhanVien.getDiaChi(),
+					nhanVien.getSoDienThoai(), nhanVien.getCanCuocCongDan(), nhanVien.getMatKhau(), nhanVien.isChucVu()
+			});
+		}
+	}
+
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if (o.equals(tblNhanVien)) {
+			/**
+			 * Tạo biến row có kiểu dữ liệu int Để table nhân viên lấy dòng được chọn
+			 */
+			int row = tblNhanVien.getSelectedRow();
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 0 là cột mã khách hàng Đưa lên textField
+			 * txtNhanVien
+			 */
+			txtMaNhanVien.setText(modelNhanVien.getValueAt(row, 0).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 1 là cột họ tên nhân viên Đưa lên
+			 * textField txtHoTenNhanVien
+			 */
+			txtHoTenNhanVien.setText(modelNhanVien.getValueAt(row, 1).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 2 là cột giới tính Đưa lên combobox
+			 * cmbGioiTinh
+			 */
+			cmbGioiTinh.setSelectedItem(modelNhanVien.getValueAt(row, 2).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 3 là cột năm sinh Đưa lên textField
+			 * txtNamSinh
+			 */
+			txtNamSinh.setText(modelNhanVien.getValueAt(row, 3).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 4 là cột địa chỉ Đưa lên textField txtDiaChi
+			 */
+			txtDiaChi.setText(modelNhanVien.getValueAt(row, 4).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 5 là cột số điện thoại đưa lên TextField txtSoDienThoai
+			 */
+			txtSoDienThoai.setText(modelNhanVien.getValueAt(row, 5).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 6 là cột CCCD đưa lên TextField txtCCCD
+			 */
+			txtCCCD.setText(modelNhanVien.getValueAt(row, 6).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 7 là cột mật khẩu đưa lên TextField txtMatKhau
+			 */
+			txtMatKhau.setText(modelNhanVien.getValueAt(row, 7).toString());
+			/**
+			 * Lấy dữ liệu từ dòng được chọn cột 8 là cột chức vụ Đưa lên combobox
+			 * cmbChucVu
+			 */
+			cmbChucVu.setSelectedItem(modelNhanVien.getValueAt(row, 8).toString());
+
+		}
+	}
+
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }

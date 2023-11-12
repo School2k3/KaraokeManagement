@@ -16,6 +16,12 @@ public class DichVu {
 	public DichVu(String maDichVu)throws Exception {
 		setMaDichVu(maDichVu);
 	}
+	
+	public DichVu(String maDichVu, String tenDichVu) throws Exception {
+		super();
+		setMaDichVu(maDichVu);
+		setTenDichVu(tenDichVu);
+	}
 	public DichVu(String maDichVu, String tenDichVu, int soLuongTon,
 			LoaiDichVu loaiDichVu, double donGia) throws Exception {
 		setMaDichVu(maDichVu);
@@ -40,13 +46,13 @@ public class DichVu {
 		return donGia;
 	}
 	public void setMaDichVu(String maDichVu) throws Exception {
-		if(maDichVu.trim().equals(""))
+		if(!maDichVu.trim().equals(""))
 		this.maDichVu = maDichVu;
 		else
 			throw new Exception("Lỗi mã dịch vụ không được rỗng!");
 	}
 	public void setTenDichVu(String tenDichVu) throws Exception {
-		if(tenDichVu.trim().equals(""))
+		if(!tenDichVu.trim().equals(""))
 			this.tenDichVu = tenDichVu;
 			else
 				throw new Exception("Lỗi tên dịch vụ không được rỗng!");

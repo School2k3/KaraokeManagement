@@ -1,21 +1,21 @@
 package entity;
 
 import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 public class ChiTietPhieuDatPhong {
 	private PhieuDatPhong phieuDatPhong;
 	private Phong phong;
-	private Date ngayDat;
-	private Date gioDat;
+	private Timestamp thoiGianDat;
 	public ChiTietPhieuDatPhong() {
 		super();
 	}
-	public ChiTietPhieuDatPhong(PhieuDatPhong phieuDatPhong, Phong phong, Date ngayDat, Date gioDat) {
+	public ChiTietPhieuDatPhong(PhieuDatPhong phieuDatPhong, Phong phong, Timestamp thoiGianDat) {
 		super();
 		this.phieuDatPhong = phieuDatPhong;
 		this.phong = phong;
-		this.ngayDat = ngayDat;
-		this.gioDat = gioDat;
+		this.thoiGianDat = thoiGianDat;
 	}
 	public PhieuDatPhong getPhieuDatPhong() {
 		return phieuDatPhong;
@@ -29,31 +29,31 @@ public class ChiTietPhieuDatPhong {
 	public void setPhong(Phong phong) {
 		this.phong = phong;
 	}
-	public Date getNgayDat() {
-		return ngayDat;
+	public Timestamp getThoiGianDat() {
+		return thoiGianDat;
 	}
-	public void setNgayDat(Date ngayDat) throws Exception {
-		if (ngayDat != null) {
-			this.ngayDat = ngayDat;
+	public void setThoiGianDat(Timestamp thoiGianDat) throws Exception {
+		if (thoiGianDat != null) {
+			this.thoiGianDat = thoiGianDat;
 		}
 			else {
 				throw new Exception("Ngày đặt không được để trống");
 			}
 	}
-	public Date getGioDat() {
-		return gioDat;
-	}
-	public void setGioDat(Date gioDat) throws Exception {
-		if (gioDat != null) {
-			this.gioDat = gioDat;
-		}
-			else {
-				throw new Exception("Giờ đặt không được để trống");
-			}
-	}
+//	public Date getGioDat() {
+//		return gioDat;
+//	}
+//	public void setGioDat(Date gioDat) throws Exception {
+//		if (gioDat != null) {
+//			this.gioDat = gioDat;
+//		}
+//			else {
+//				throw new Exception("Giờ đặt không được để trống");
+//			}
+//	}
 	@Override
 	public String toString() {
-		return "ChiTietPhieuDatPhong [phieuDatPhong=" + phieuDatPhong + ", ngayDat=" + ngayDat + ", gioDat=" + gioDat
+		return "ChiTietPhieuDatPhong [phieuDatPhong=" + phieuDatPhong + ", ngayDat=" + thoiGianDat
 				+ "]";
 	}
 	

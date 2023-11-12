@@ -6,32 +6,27 @@ import java.sql.SQLException;
 public class LoaiDichVu {
 	private String maLoaiDichVu;
 	private String tenLoaiDichVu;
-	public String getMaDichVu() {
+	public String getMaLoaiDichVu() {
 		return maLoaiDichVu;
 	}
 	public String getTenLoaiDichVu() {
 		return tenLoaiDichVu;
 	}
 	public void setTenLoaiDichVu(String tenLoaiDichVu)throws Exception {
-		
-		if(tenLoaiDichVu.trim().equals(""))
+		if(!tenLoaiDichVu.trim().equals(""))
 			this.tenLoaiDichVu = tenLoaiDichVu;
 			else
-				throw new Exception("Lỗi mã loaij dịch vụ không được rỗng!");
+				throw new Exception("Lỗi tên loại dịch vụ không được rỗng!");
 	}
 	public LoaiDichVu(String maDichVu, String tenLoaiDichVu)throws Exception {
 		this.maLoaiDichVu= maDichVu;
 		setTenLoaiDichVu(tenLoaiDichVu);
 	}
-	public LoaiDichVu(String maDichVu)throws Exception {
-		this.maLoaiDichVu= maDichVu;
-		setTenLoaiDichVu(maDichVu);
+	public LoaiDichVu(String maLoaiDichVu)throws Exception {
+		this.maLoaiDichVu= maLoaiDichVu;
 	}
 	public LoaiDichVu() {
 	}
-//	public LoaiDichVu(ResultSet rs) throws SQLException, Exception{
-//		
-//	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

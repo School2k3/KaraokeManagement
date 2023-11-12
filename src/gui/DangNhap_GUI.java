@@ -1,37 +1,28 @@
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.Color;
-
 import javax.swing.JLabel;
-
 import java.awt.Font;
-
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 
-public class DangNhap_GUI extends JFrame implements ActionListener, KeyListener {
+public class DangNhap_GUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlDangNhap;
 	private JTextField txtTenTaiKhoan;
 	private JPasswordField txtPwd;
-	private JButton btnThoat, btnDangNhap;
 
 	/**
 	 * Launch the application.
@@ -86,22 +77,20 @@ public class DangNhap_GUI extends JFrame implements ActionListener, KeyListener 
 		txtPwd.setBounds(546, 303, 268, 41);
 		pnlDangNhap.add(txtPwd);
 		
-		btnDangNhap = new JButton("\u0110\u0103ng nh\u1EADp");
+		JButton btnDangNhap = new JButton("\u0110\u0103ng nh\u1EADp");
 		btnDangNhap.setBackground(new Color(255, 153, 255));
 		btnDangNhap.setIcon(new ImageIcon(DangNhap_GUI.class.getResource("/icon/Log in.png")));
 		btnDangNhap.setFont(new Font("SansSerif", Font.BOLD, 18));
 		btnDangNhap.setBounds(685, 441, 210, 62);
-		btnDangNhap.setFocusable(false);
 		pnlDangNhap.add(btnDangNhap);
 		
-		btnThoat = new JButton("Tho\u00E1t");
+		JButton btnThoat = new JButton("Tho\u00E1t");
 		btnThoat.setForeground(Color.BLACK);
 		btnThoat.setBackground(Color.LIGHT_GRAY);
 		btnThoat.setIcon(new ImageIcon(DangNhap_GUI.class.getResource("/icon/log out.png")));
 		btnThoat.setFont(new Font("SansSerif", Font.BOLD, 18));
 		btnThoat.setBounds(384, 441, 184, 62);
 		pnlDangNhap.add(btnThoat);
-		btnDangNhap.setFocusable(false);
 		
 		JLabel lblBanner = new JLabel("");
 		lblBanner.setIcon(new ImageIcon(DangNhap_GUI.class.getResource("/icon/dang nhap2 1.png")));
@@ -131,50 +120,6 @@ public class DangNhap_GUI extends JFrame implements ActionListener, KeyListener 
 		lblMap.setFont(new Font("SansSerif", Font.ITALIC, 15));
 		lblMap.setBounds(10, 772, 331, 41);
 		pnlDangNhap.add(lblMap);
-		
-		btnThoat.addActionListener(this);
-		btnDangNhap.addActionListener(this);
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Object obj= e.getSource();
-		if(obj.equals(btnDangNhap)){
-			String taiKhoan = txtTenTaiKhoan.getText();
-	        String matKhau = new String(txtPwd.getPassword());
-	        if (taiKhoan.equals("NV001") && matKhau.equals("123")) {
-	            // Nếu đúng, chuyển đến giao diện TrangChu
-	            TrangChu h = new TrangChu();
-	            h.setVisible(true);
-	            dispose(); // đóng trang đăng nhập
-	        } else {
-	            JOptionPane.showMessageDialog(this, "Sai tài khoản hoặc mật khẩu. Vui lòng thử lại.");
-	        }
-		}
-        else if (obj.equals(btnThoat)) {
-			System.exit(0);
-		}
-		
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		//if(e.getKeyCode()== KeyEvent.VK_ENTER)
-			
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

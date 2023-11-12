@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -17,6 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import connectDB.ConnectDB;
 import dao.DichVu_DAO;
 import entity.DichVu;
 
@@ -41,6 +44,15 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 	 * @throws Exception 
 	 */
 	public CapNhatDichVu_GUI() throws Exception {
+		/**
+		 * Connect to database
+		 */
+		try {
+			ConnectDB.getInstance().connect();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		dv_dao= new DichVu_DAO();
 		setSize(1600,1050);
 		setLayout(null);
@@ -60,7 +72,7 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		add(lblLoaiDichVu);
 		
 		JLabel lblTenDichVu = new JLabel("Tên loại dịch vụ:");
-		lblTenDichVu.setBounds(726, 140, 132, 62);
+		lblTenDichVu.setBounds(726, 140, 173, 62);
 		lblTenDichVu.setFont(new Font("SansSerif", Font.BOLD, 20));
 		add(lblTenDichVu);
 		
@@ -81,7 +93,7 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		txtMaDichVu.setColumns(10);
 		
 		txtTenDichVu = new JTextField();
-		txtTenDichVu.setBounds(900, 155, 341, 32);
+		txtTenDichVu.setBounds(904, 155, 341, 32);
 		txtTenDichVu.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		txtTenDichVu.setColumns(10);
 		add(txtTenDichVu);
@@ -93,7 +105,7 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		add(txtDonGia);
 		
 		txtSoLuongTon = new JTextField();
-		txtSoLuongTon.setBounds(900, 228, 233, 32);
+		txtSoLuongTon.setBounds(904, 228, 233, 32);
 		txtSoLuongTon.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		txtSoLuongTon.setColumns(10);
 		add(txtSoLuongTon);
@@ -147,7 +159,7 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		scrDichVu.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblDichVu.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblDichVu.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-		docDuLieu();
+		docDuLieuLenTable();
 
 		
 		
@@ -157,8 +169,8 @@ public class CapNhatDichVu_GUI extends JPanel implements ActionListener{
 		btnXoa.addActionListener(this);
 		btnXoaTrang.addActionListener(this);
 	}
-	public void docDuLieu() throws Exception {
-		dsDV = dv_dao.layThongTin();
+	public void docDuLieuLenTable() throws Exception {
+		dsDV = dv_dao.getAllTableDichVu();
 		model.setRowCount(0);
 		for (DichVu dv : dsDV) {
 			model.addRow(new Object[] { dv.getMaDichVu(), dv.getTenDichVu(),dv.getLoaiDichVu().getTenLoaiDichVu(), dv.getSoLuongTon(), dv.getDonGia() });

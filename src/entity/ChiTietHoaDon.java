@@ -1,24 +1,21 @@
 package entity;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class ChiTietHoaDon {
 	private HoaDon hoaDon;
 	private DichVu dichVu;
+	private int soLuong;
 	private double donGia;
-	private Date thoiGianBatDau;
-	private Date thoiGianKetThuc;
 	public ChiTietHoaDon() {
 		super();
 	}
-	public ChiTietHoaDon(HoaDon hoaDon, DichVu dichVu, double donGia, Date thoiGianBatDau,
-			Date thoiGianKetThuc) {
+	public ChiTietHoaDon(HoaDon hoaDon, DichVu dichVu, int soLuong, double donGia) {
 		super();
 		this.hoaDon = hoaDon;
 		this.dichVu = dichVu;
+		this.soLuong = soLuong;
 		this.donGia = donGia;
-		this.thoiGianBatDau = thoiGianBatDau;
-		this.thoiGianKetThuc = thoiGianKetThuc;
 	}
 	public HoaDon getHoaDon() {
 		return hoaDon;
@@ -32,6 +29,15 @@ public class ChiTietHoaDon {
 	public void setDichVu(DichVu dichVu) {
 		this.dichVu = dichVu;
 	}
+	public int getSoLuong() {
+		return soLuong;
+	}
+	public void setSoLuong(int soLuong) throws Exception {
+		if(soLuong > 0)
+			this.soLuong = soLuong;
+			else
+				throw new Exception("Số lượng phải lớn hơn 0!");
+	}
 	public double getDonGia() {
 		return donGia;
 	}
@@ -41,32 +47,13 @@ public class ChiTietHoaDon {
 			else
 				throw new Exception("Đơn giá không được nhỏ hơn 0!");
 	}
-	public Date getThoiGianBatDau() {
-		return thoiGianBatDau;
-	}
-	public void setThoiGianBatDau(Date thoiGianBatDau) throws Exception {
-		if (thoiGianBatDau != null) {
-			this.thoiGianBatDau = thoiGianBatDau;
-		}
-			else {
-				throw new Exception("Thời gian bắt đầu không được để trống");
-			}
-	}
-	public Date getThoiGianKetThuc() {
-		return thoiGianKetThuc;
-	}
-	public void setThoiGianKetThuc(Date thoiGianKetThuc) throws Exception {
-		if (thoiGianKetThuc != null) {
-			this.thoiGianKetThuc = thoiGianKetThuc;
-		}
-			else {
-				throw new Exception("Thời gian kết thúc không được để trống");
-			}
-	}
 	@Override
 	public String toString() {
-		return "ChiTietHoaDon [hoaDon=" + hoaDon + ", donGia=" + donGia + ", thoiGianBatDau=" + thoiGianBatDau
-				+ ", thoiGianKetThuc=" + thoiGianKetThuc + "]";
+		return "ChiTietHoaDon [hoaDon=" + hoaDon + ", dichVu=" + dichVu + ", soLuong=" + soLuong + ", donGia=" + donGia
+				+ "]";
 	}
+
+
+	
 	
 }
