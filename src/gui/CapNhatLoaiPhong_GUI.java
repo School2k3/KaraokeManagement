@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import connectDB.ConnectDB;
 import dao.LoaiPhong_DAO;
 import entity.LoaiPhong;
+import entity.Phong;
 
 public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, MouseListener {
 	private static final long serialVersionUID = 1L;
@@ -35,7 +36,8 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 
 	/**
 	 * Create the frame.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public CapNhatLoaiPhong_GUI() throws Exception {
 		/**
@@ -121,9 +123,9 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 		tblLoaiPhong.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblLoaiPhong.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 		add(scrLoaiPhong);
-		
+		loadDanhSachLoaiPhong();
 		docDuLieuVaoTable();
-		
+
 		// them su kien
 		btnThem.addActionListener(this);
 		btnSua.addActionListener(this);
@@ -141,6 +143,10 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 		txtTenLoaiPhong.setText("");
 	}
 
+	private void loadDanhSachLoaiPhong() throws Exception {
+		dsLoaiPhong = lp_dao.getAllTableLoaiPhong();
+	}
+
 	/**
 	 * Hàm đọc dữ liệu vào database addRow: Thêm các dòng dữ liệu từ database vào
 	 * table
@@ -148,7 +154,6 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 	 * @throws Exception
 	 */
 	private void docDuLieuVaoTable() throws Exception {
-		dsLoaiPhong = lp_dao.getAllTableLoaiPhong();
 		model.setRowCount(0);
 		for (LoaiPhong lp : dsLoaiPhong) {
 			model.addRow(new Object[] { lp.getMaLoaiPhong(), lp.getTenLoaiPhong() });
@@ -166,12 +171,30 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 					LoaiPhong lp = new LoaiPhong(ma, ten);
 					if (lp_dao.themLoaiPhong(lp)) {
 						JOptionPane.showMessageDialog(this, "Thêm thành công");
+						loadDanhSachLoaiPhong();
 						docDuLieuVaoTable();
 						xoaTrang();
 					} else {
-						JOptionPane.showMessageDialog(this, "Mã không được trùng.\nThêm thất bại.");
-						txtMaLoaiPhong.selectAll();
-						txtMaLoaiPhong.requestFocus();
+						int chkMa = 0; // Nếu bằng 0 thì chưa có mã để cập nhật
+						int chkTen = 0; // Nếu >0 thì tên dịch vụ này đã có. Không thể cập nhật được
+						loadDanhSachLoaiPhong();
+						for (LoaiPhong loaiPhong : dsLoaiPhong) {
+							String tmpMa = loaiPhong.getMaLoaiPhong().trim();
+							String tmpTen = loaiPhong.getTenLoaiPhong().trim();
+							if (ma.equalsIgnoreCase(tmpMa))
+								chkMa = 1;
+							if (ten.equalsIgnoreCase(tmpTen))
+								chkTen = 1;
+						}
+						if (chkMa > 0) {
+							JOptionPane.showMessageDialog(this, "Mã loại phòng không được trùng.\nThêm thất bại");
+							txtMaLoaiPhong.requestFocus();
+							txtMaLoaiPhong.selectAll();
+						} else if (chkTen > 0) {
+							JOptionPane.showMessageDialog(this, "Tên loại phòng này đã có.\nnThêm thất bại");
+							txtTenLoaiPhong.requestFocus();
+							txtTenLoaiPhong.selectAll();
+						}
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -188,7 +211,26 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 						docDuLieuVaoTable();
 						xoaTrang();
 					} else {
-						JOptionPane.showMessageDialog(this, "Cập  nhật thất bại");
+						int chkMa = 0; // Nếu bằng 0 thì chưa có mã để cập nhật
+						int chkTen = 0; // Nếu >0 thì tên dịch vụ này đã có. Không thể cập nhật được
+						loadDanhSachLoaiPhong();
+						for (LoaiPhong loaiPhong : dsLoaiPhong) {
+							String tmpMa = loaiPhong.getMaLoaiPhong().trim();
+							String tmpTen = loaiPhong.getTenLoaiPhong().trim();
+							if (ma.equalsIgnoreCase(tmpMa))
+								chkMa = 1;
+							if (ten.equalsIgnoreCase(tmpTen))
+								chkTen = 1;
+						}
+						if (chkMa == 00) {
+							JOptionPane.showMessageDialog(this, "Không tìm thấy mã cần cập nhật.\nCập nhật thất bại");
+							txtMaLoaiPhong.requestFocus();
+							txtMaLoaiPhong.selectAll();
+						} else if (chkTen > 0) {
+							JOptionPane.showMessageDialog(this, "Tên loại phòng này đã có.\nCập nhật thất bại");
+							txtTenLoaiPhong.requestFocus();
+							txtTenLoaiPhong.selectAll();
+						}
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -204,6 +246,7 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 					if (lp_dao.xoaLoaiPhongByMa(ma)) {
 						try {
 							JOptionPane.showMessageDialog(this, "Xóa thành công");
+							loadDanhSachLoaiPhong();
 							docDuLieuVaoTable();
 							xoaTrang();
 						} catch (Exception e1) {
@@ -216,13 +259,11 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 							if (ma.equalsIgnoreCase(s))
 								n += 1;
 						}
-						if (n > 0) {
+						if (n > 0)
 							JOptionPane.showMessageDialog(this, "Loại phòng đã được sử dụng.");
-							xoaTrang();
-						} else {
+						else
 							JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy mã dịch vụ cần xóa!");
-							xoaTrang();
-						}
+						xoaTrang();
 					}
 				}
 			} else if (ma.equals("") && !ten.equals("")) {
@@ -232,6 +273,7 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 					if (lp_dao.xoaLoaiPhongByTen(ten)) {
 						try {
 							JOptionPane.showMessageDialog(this, "Xóa thành công");
+							loadDanhSachLoaiPhong();
 							docDuLieuVaoTable();
 							xoaTrang();
 						} catch (Exception e1) {
@@ -241,16 +283,15 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 						int n = 0;
 						for (LoaiPhong lp : dsLoaiPhong) {
 							String s = lp.getTenLoaiPhong();
-							if (ma.equalsIgnoreCase(s))
+							if (ten.equalsIgnoreCase(s))
 								n += 1;
 						}
-						if (n > 0) {
+						if (n > 0)
 							JOptionPane.showMessageDialog(this, "Loại phòng đã được sử dụng");
-							xoaTrang();
-						} else {
+						else
 							JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy tên phòng cần xóa");
-							xoaTrang();
-						}
+						xoaTrang();
+
 					}
 				}
 			} else {
@@ -260,13 +301,23 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 					if (lp_dao.xoaLoaiPhongByMaVaTen(ma, ten)) {
 						try {
 							JOptionPane.showMessageDialog(this, "Xóa thành công");
+							loadDanhSachLoaiPhong();
 							docDuLieuVaoTable();
 							xoaTrang();
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
 					} else {
-						JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy mã phòng và tên phòng cần xóa");
+						int n = 0;
+						for (LoaiPhong lp : dsLoaiPhong) {
+							String s = lp.getMaLoaiPhong();
+							if (ma.equalsIgnoreCase(s))
+								n += 1;
+						}
+						if (n > 0)
+							JOptionPane.showMessageDialog(this, "Loại phòng đã được sử dụng");
+						else
+							JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy phòng cần xóa");
 						xoaTrang();
 					}
 				}

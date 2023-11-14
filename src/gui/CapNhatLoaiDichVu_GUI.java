@@ -29,6 +29,7 @@ import dao.DichVu_DAO;
 import dao.LoaiDichVu_DAO;
 import entity.DichVu;
 import entity.LoaiDichVu;
+import entity.Phong;
 
 public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, MouseListener {
 	private JTextField txtMaLoaiDichVu, txtTenLoaiDichVu;
@@ -120,12 +121,15 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 
 		add(scrLoaiDichVu = new JScrollPane(tblLoaiDichVu = new JTable(model), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+		tblLoaiDichVu.setFont(new Font("SansSerif", Font.PLAIN, 17));
 		scrLoaiDichVu.setBounds(175, 337, 1291, 674);
 		scrLoaiDichVu.setBackground(new Color(120, 255, 239));
 		scrLoaiDichVu.getViewport().setBackground(Color.WHITE);
 		scrLoaiDichVu.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblLoaiDichVu.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblLoaiDichVu.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+		tblLoaiDichVu.setRowHeight(50);
+		loadDanhSachLoaiDichVu();
 		docDuLieuVaoTable();
 		// them su kien
 		btnThem.addActionListener(this);
@@ -141,7 +145,12 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 	 */
 	private void xoaTrang() {
 		txtMaLoaiDichVu.setText("");
+		txtMaLoaiDichVu.requestFocus();
 		txtTenLoaiDichVu.setText("");
+	}
+
+	private void loadDanhSachLoaiDichVu() throws Exception {
+		dsLoaiDichVu = ldv_dao.getAllTableLoaiDichVu();
 	}
 
 	/**
@@ -151,7 +160,6 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 	 * @throws Exception
 	 */
 	private void docDuLieuVaoTable() throws Exception {
-		dsLoaiDichVu = ldv_dao.getAllTableLoaiDichVu();
 		model.setRowCount(0);
 		for (LoaiDichVu ldv : dsLoaiDichVu) {
 			model.addRow(new Object[] { ldv.getMaLoaiDichVu(), ldv.getTenLoaiDichVu() });
@@ -169,10 +177,30 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 					LoaiDichVu ldv = new LoaiDichVu(ma, ten);
 					if (ldv_dao.themLoaiDichVu(ldv)) {
 						JOptionPane.showMessageDialog(this, "Thêm thành công");
+						loadDanhSachLoaiDichVu();
 						docDuLieuVaoTable();
 						xoaTrang();
 					} else {
-						JOptionPane.showMessageDialog(this, "Mã không được trùng.\nThêm thất bại.");
+						int chkMa = 0; // >0 thì đã có mã nên không thêm được
+						int chkTen = 0; // ==1 thì đã có loại dịch vụ này
+						loadDanhSachLoaiDichVu();
+						for (LoaiDichVu ldv1 : dsLoaiDichVu) {
+							String tmpMa = ldv1.getMaLoaiDichVu();
+							String tmpTen = ldv1.getTenLoaiDichVu();
+							if (ma.equalsIgnoreCase(tmpMa))
+								chkMa = 1;
+							if (ten.equalsIgnoreCase(tmpTen))
+								chkTen = 1;
+						}
+						if (chkMa > 0) {
+							txtMaLoaiDichVu.requestFocus();
+							txtMaLoaiDichVu.selectAll();
+							JOptionPane.showMessageDialog(this, "Mã loại dịch vụ không được trùng!\nThêm thất bại");
+						} else if (chkTen > 0) {
+							txtTenLoaiDichVu.requestFocus();
+							txtTenLoaiDichVu.selectAll();
+							JOptionPane.showMessageDialog(this, "Tên loại dịch vụ này đã có!\nVui lòng đổi tên khác.");
+						}
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -186,10 +214,30 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 					LoaiDichVu ldv = new LoaiDichVu(ma, ten);
 					if (ldv_dao.capNhatLoaiDichVu(ldv)) {
 						JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+						loadDanhSachLoaiDichVu();
 						docDuLieuVaoTable();
 						xoaTrang();
 					} else {
-						JOptionPane.showMessageDialog(this, "Cập  nhật thất bại");
+						int chkMa = 0; // >0 thì đã có mã nên không thêm được
+						int chkTen = 0; // ==1 thì đã có loại dịch vụ này
+						loadDanhSachLoaiDichVu();
+						for (LoaiDichVu ldv1 : dsLoaiDichVu) {
+							String tmpMa = ldv1.getMaLoaiDichVu();
+							String tmpTen = ldv1.getTenLoaiDichVu();
+							if (ma.equalsIgnoreCase(tmpMa))
+								chkMa = 1;
+							if (ten.equalsIgnoreCase(tmpTen))
+								chkTen = 1;
+						}
+						if (chkMa == 0) {
+							txtMaLoaiDichVu.requestFocus();
+							txtMaLoaiDichVu.selectAll();
+							JOptionPane.showMessageDialog(this, "Không tìm thấy mã!\nCập nhật thất bại");
+						} else if (chkTen > 0) {
+							txtTenLoaiDichVu.requestFocus();
+							txtTenLoaiDichVu.selectAll();
+							JOptionPane.showMessageDialog(this, "Tên loại dịch vụ này đã có!\nVui lòng đổi tên khác.");
+						}
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -205,6 +253,7 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 					if (ldv_dao.xoaLoaiDichVuByMa(ma)) {
 						try {
 							JOptionPane.showMessageDialog(this, "Xóa thành công");
+							loadDanhSachLoaiDichVu();
 							docDuLieuVaoTable();
 							xoaTrang();
 						} catch (Exception e1) {
@@ -217,13 +266,12 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 							if (ma.equalsIgnoreCase(s))
 								n += 1;
 						}
-						if (n > 0) {
+						if (n > 0)
 							JOptionPane.showMessageDialog(this, "Loại dịch vụ đã được sử dụng");
-							xoaTrang();
-						} else {
+						else
 							JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy mã dịch vụ cần xóa");
-							xoaTrang();
-						}
+						xoaTrang();
+
 					}
 				}
 			} else if (ma.equals("") && !ten.equals("")) {
@@ -233,6 +281,7 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 					if (ldv_dao.xoaLoaiDichVuByTen(ten)) {
 						try {
 							JOptionPane.showMessageDialog(this, "Xóa thành công");
+							loadDanhSachLoaiDichVu();
 							docDuLieuVaoTable();
 							xoaTrang();
 						} catch (Exception e1) {
@@ -242,16 +291,14 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 						int n = 0;
 						for (LoaiDichVu ldv : dsLoaiDichVu) {
 							String s = ldv.getTenLoaiDichVu();
-							if (ma.equalsIgnoreCase(s))
+							if (ten.equalsIgnoreCase(s))
 								n += 1;
 						}
-						if (n > 0) {
+						if (n > 0)
 							JOptionPane.showMessageDialog(this, "Loại dịch vụ đã được sử dụng");
-							xoaTrang();
-						} else {
+						else
 							JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy tên dịch vụ cần xóa");
-							xoaTrang();
-						}
+						xoaTrang();
 					}
 				}
 			} else {
@@ -261,13 +308,24 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 					if (ldv_dao.xoaLoaiDichVuByMaVaTen(ma, ten)) {
 						try {
 							JOptionPane.showMessageDialog(this, "Xóa thành công");
+							loadDanhSachLoaiDichVu();
 							docDuLieuVaoTable();
 							xoaTrang();
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
 					} else {
-						JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy mã dịch vụ và tên dịch vụ cần xóa");
+						int n = 0;
+						for (LoaiDichVu ldv : dsLoaiDichVu) {
+							String s = ldv.getMaLoaiDichVu();
+							String tmp = ldv.getTenLoaiDichVu();
+							if (ma.equalsIgnoreCase(s) && ten.equals(tmp))
+								n += 1;
+						}
+						if (n > 0)
+							JOptionPane.showMessageDialog(this, "Loại dịch vụ đã được sử dụng");
+						else
+							JOptionPane.showMessageDialog(this, "Không tìm thấy dịch vụ cần xóa!");
 						xoaTrang();
 					}
 				}
@@ -317,9 +375,9 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 			JOptionPane.showMessageDialog(this, "Mã loại dịch vụ không được rỗng");
 			txtMaLoaiDichVu.requestFocus();
 			return false;
-		} else if (!maLoaiDichVu.matches("LDV\\d{2}")) {
+		} else if (!maLoaiDichVu.matches("LDV\\d{3}")) {
 			JOptionPane.showMessageDialog(this,
-					"Mã loại dịch vụ gồm 5 kí tự bắt đầu bằng LDV và 2 kí tự số \n VD: LDV01");
+					"Mã loại dịch vụ gồm 6 kí tự bắt đầu bằng LDV và 3 kí tự số \n VD: LDV001");
 			txtMaLoaiDichVu.requestFocus();
 			txtMaLoaiDichVu.selectAll();
 			return false;

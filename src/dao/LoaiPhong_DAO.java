@@ -85,7 +85,7 @@ public class LoaiPhong_DAO {
 	public ArrayList<LoaiPhong> getcmbLoaiPhong() throws Exception{
 		ArrayList<LoaiPhong> dsLoaiPhong = new ArrayList<LoaiPhong>();
 		try {
-			ConnectDB.getInstance().connect();
+			ConnectDB.getInstance();
 			Connection con = ConnectDB.getConnection();
 			String sql = "select distinct maLoaiPhong,tenLoaiPhong from LoaiPhong";
 			Statement statement = con.createStatement();

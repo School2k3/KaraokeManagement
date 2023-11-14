@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,6 +19,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import dao.NhanVien_DAO;
+import entity.NhanVien;
+
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
@@ -33,10 +38,14 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 						mniCapNhatNhanVien, mniTimKiemNhanVien, mniThongKeSoLuongHoaDon,
 						mniLapHoaDon, mniThanhToan, mniThongKeDoanhThu;
 	private JMenu mnTroGiup;
-	private JButton btnChonKhachHang_DatPhong, btnDatPhong, btnChonKhachHang_LapHoaDon, btnLapHoaDon;
+	private JButton btnChonKhachHang_DatPhong, btnDatPhong, btnChonKhachHang_LapHoaDon, btnLapHoaDon, btnDangXuat;
 	private JTabbedPane tabbedPane;
 	private TimKiemKhachHang_GUI pnlTimKiemKhachHang;
 	private LapHoaDon_GUI pnlLapHoaDon;
+	private NhanVien nhanVien;
+	private NhanVien_DAO nhanVienDAO;
+	private List<NhanVien> listNhanVien;
+	private DangNhap_GUI winDangNhap;
 	private int x = 0, w = 300, h = 50, dms1 = 298, dms2 = 50;
 
 	
@@ -44,7 +53,8 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 	 * Create the frame.
 	 * @throws Exception 
 	 */
-	public TrangChu_GUI() throws Exception {
+	public TrangChu_GUI(NhanVien nhanVien) throws Exception {
+		this.nhanVien = nhanVien;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JPanel pnlFull = new JPanel();
@@ -120,13 +130,23 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		lblTaiKhoanNhanVien.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 		mnuBar.add(lblTaiKhoanNhanVien);
 		
+		JLabel lblTenNhanVien = new JLabel("");
+		lblTenNhanVien.setBounds(110, 780, 200, 25);
+		lblTenNhanVien.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+		mnuBar.add(lblTenNhanVien);
+		
 		JLabel lblChucVuNhanVien = new JLabel("Chức vụ: ");
 		lblChucVuNhanVien.setBounds(5, 830, 100, 25);
 		lblChucVuNhanVien.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 		mnuBar.add(lblChucVuNhanVien);
 		
+		JLabel lblTenChucVu = new JLabel("");
+		lblTenChucVu.setBounds(110, 830, 200, 25);
+		lblTenChucVu.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+		mnuBar.add(lblTenChucVu);
+		
 		// Phần Button đăng xuất
-		JButton btnDangXuat = new JButton("Đăng xuất");
+		btnDangXuat = new JButton("Đăng xuất");
 		btnDangXuat.setBounds(50, 930, 200, 40);
 		btnDangXuat.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 		btnDangXuat.getAccessibleContext().getAccessibleComponent().setForeground(Color.WHITE);
@@ -216,7 +236,6 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		mnNhanVien.add(mniThongKeDoanhThu);
 		
 		// Menu hóa đơn
-		
 		mniLapHoaDon = new JMenuItem("Lập hóa đơn");
 		mniLapHoaDon.setPreferredSize(new Dimension(dms1, dms2));
 		mniLapHoaDon.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
@@ -270,6 +289,7 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		tabbedPane.addTab("DatPhong", null, pnlDatPhong, null);
 		pnlDatPhong.setLayout(null);
 		
+		// Button chọn khách hàng
 		btnChonKhachHang_DatPhong = new JButton("Chọn khách hàng");
 		btnChonKhachHang_DatPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnChonKhachHang_DatPhong.setFocusable(false);
@@ -388,7 +408,7 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		pnlThongKeDoanhThu.setLayout(null);
 
 		// JPanel lập hóa đơn
-		pnlLapHoaDon = new LapHoaDon_GUI();
+		pnlLapHoaDon = new LapHoaDon_GUI(nhanVien);
 		tabbedPane.addTab("LapHoaDon", null, pnlLapHoaDon, null);
 		pnlLapHoaDon.setLayout(null);
 		
@@ -406,11 +426,19 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 				tabbedPane.setSelectedIndex(9);
 			}
 		});
-		
+	 
 		// JPanel thanh toán
-		ThanhToan_GUI pnlThanhToan = new ThanhToan_GUI();
+		ThanhToan_GUI pnlThanhToan = new ThanhToan_GUI(nhanVien);
 		tabbedPane.addTab("ThanhToan", null, pnlThanhToan, null);
 		pnlThanhToan.setLayout(null);
+		
+		// Hiển thị tên nhân viên và chức vụ sau khi đăng nhập thành công
+		nhanVienDAO = new NhanVien_DAO();
+		listNhanVien = nhanVienDAO.getAllTableNhanVien();
+		String tenNhanVien = nhanVien.getHoTenNhanVien();
+		String chucVu = nhanVien.isChucVu();
+		lblTenNhanVien.setText(tenNhanVien);
+		lblTenChucVu.setText(chucVu);
 		
 		// Thêm sự kiện vào từng MenuItem
 		mniCapNhatPhong.addActionListener(this);
@@ -494,19 +522,19 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		}
 	}
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TrangChu_GUI frame = new TrangChu_GUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	/**
+//	 * Launch the application.
+//	 */
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					TrangChu_GUI winTrangChu = new TrangChu_GUI();
+//					winTrangChu.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 }

@@ -61,6 +61,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 	private JComboBox cmbTrangThai, cmbLoaiDichVu;
 	private Frm_NhanPhong winNhanPhong;
 	private JTabbedPane tabbedPane;
+	private NhanVien nhanVien;
 	private Phong_DAO phongDAO;
 	private LoaiPhong_DAO loaiPhongDAO;
 	private DichVu_DAO dichVuDAO;
@@ -85,8 +86,8 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 	 * 
 	 * @throws Exception
 	 */
-	public LapHoaDon_GUI() throws Exception {
-
+	public LapHoaDon_GUI(NhanVien nhanVien) throws Exception {
+		this.nhanVien = nhanVien;
 		// Kết nối với ConnectDB
 		try {
 			ConnectDB.getInstance().connect();
@@ -306,7 +307,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		listChiTietHoaDon = chiTietHoaDonDAO.getAllChiTietHoaDon();
 
 		// Cập nhật danh sách vào trong các bảng
-		updateTableData_Phong();
+		updateTableData_Phong(listPhong);
 		updateTableData_DichVu();
 		updateComboBox_LoaiDichVu();
 
@@ -430,7 +431,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 				}
 			}
 			String mahd = hoaDonDAO.phatSinhMaHoaDon(); // Phát sinh mã hóa đơn tăng dần
-			String manv = "NV001"; // Lấy mã nhân viên của nhân viên đang sử dụng chương trình
+			String manv = nhanVien.getMaNhanVien(); // Lấy mã nhân viên của nhân viên đang sử dụng chương trình
 			String tt = "Chưa thanh toán";
 			String maphong = tblChiTietHoaDon.getValueAt(0, 1).toString();
 			Timestamp ngaylap = new Timestamp(System.currentTimeMillis());
@@ -462,6 +463,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 				JOptionPane.showMessageDialog(this, "Bạn đã thêm hóa đơn thành công!");
 				JOptionPane.showMessageDialog(this, "Bắt đầu tính giờ nhận phòng!");
 				listPhong = phongDAO.getAllTablePhong();
+				updateTableData_Phong(listPhong);
 
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -496,7 +498,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 				modelPhong.getDataVector().removeAllElements();
 				try {
 					listPhong = phongDAO.getAllTablePhongByTrangThai(ttTim);
-					updateTableData_Phong();
+					updateTableData_Phong(listPhong);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -504,7 +506,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 			} else {
 				try {
 					listPhong = phongDAO.getAllTablePhong();
-					updateTableData_Phong();
+					updateTableData_Phong(listPhong);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -515,9 +517,9 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 	}
 
 	// Cập nhật thông tin phòng vào trong bảng
-	private void updateTableData_Phong() {
+	private void updateTableData_Phong(List<Phong> list) {
 		modelPhong.getDataVector().removeAllElements();
-		for (Phong p : listPhong) {
+		for (Phong p : list) {
 			String malp = p.getLoaiPhong().getMaLoaiPhong();
 			String tenlp = "";
 			for (LoaiPhong lp : listLoaiPhong) {
@@ -570,8 +572,8 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 	}
 
 	private String formatDateTime(Date currentDate) {
-		// Định dạng theo mẫu yyyy-MM-dd HH:mm:ss
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		// Định dạng theo mẫu dd-MM-yyyy HH:mm:ss
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 		// Chuyển đổi và in ra ngày giờ theo định dạng
 		return sdf.format(currentDate);

@@ -39,31 +39,19 @@ public class Phong {
 		return maPhong;
 	}
 	public void setMaPhong(String maPhong) throws Exception{
-		if(!maPhong.trim().equals("")) {
 			this.maPhong = maPhong;
-		}else {
-			throw new Exception("Mã phòng không được để rỗng");
-		}
 	}
 	public String getTenPhong() {
 		return tenPhong;
 	}
 	public void setTenPhong(String tenPhong) throws Exception{
-		if(!tenPhong.trim().equals("")) {
 			this.tenPhong = tenPhong;
-		}else {
-			throw new Exception("Tên phòng không được để rỗng");
-		}
 	}
 	public String getTrangThai() {
 		return trangThai;
 	}
 	public void setTrangThai(String trangThai) throws Exception{
-		if(!trangThai.trim().equals("")) {
 			this.trangThai = trangThai;
-		}else {
-			throw new Exception("Trạng thái không được để rỗng");
-		}
 	}
 	public LoaiPhong getLoaiPhong() {
 		return loaiPhong;
@@ -84,7 +72,12 @@ public class Phong {
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(maPhong);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((maPhong == null) ? 0 : maPhong.hashCode());
+		result = prime * result
+				+ ((tenPhong == null) ? 0 : tenPhong.hashCode());
+		return result;
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -95,7 +88,17 @@ public class Phong {
 		if (getClass() != obj.getClass())
 			return false;
 		Phong other = (Phong) obj;
-		return Objects.equals(maPhong, other.maPhong);
+		if (maPhong == null) {
+			if (other.maPhong != null)
+				return false;
+		} else if (!maPhong.equals(other.maPhong))
+			return false;
+		if (tenPhong == null) {
+			if (other.tenPhong != null)
+				return false;
+		} else if (!tenPhong.equals(other.tenPhong))
+			return false;
+		return true;
 	}
 	
 	

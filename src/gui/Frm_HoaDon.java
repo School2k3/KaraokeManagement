@@ -10,12 +10,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+
+import dao.HoaDon_DAO;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -27,6 +32,7 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 	public DefaultTableModel modelChiTietDichVu;
 	public JTable tblChiTietDichVu;
 	public JButton btnThanhToan, btnInHoaDon, btnQuayLai;
+	public HoaDon_DAO hoaDonDAO;
 
 	/**
 	 * Launch the application.
@@ -290,6 +296,8 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 		txtTienThua.setBounds(736, 855, 352, 31);
 		pnlFull.add(txtTienThua);
 		
+		hoaDonDAO = new HoaDon_DAO();
+		
 		// Thiết lập các sự kiện cho các nút
 		btnThanhToan.addActionListener(this);
 		btnInHoaDon.addActionListener(this);
@@ -301,7 +309,9 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnThanhToan)) {
-			
+			JOptionPane.showMessageDialog(this, "Đã thanh toán hóa đơn thành công!");
+			String maHoaDon = txtMaHoaDon.getText();
+			hoaDonDAO.updateTrangThai(maHoaDon, "Đã thanh toán");
 		} else if (o.equals(btnInHoaDon)) {
 			
 		} else if (o.equals(btnQuayLai)) {

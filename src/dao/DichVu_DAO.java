@@ -30,7 +30,6 @@ public class DichVu_DAO {
                 String maLoaiDichVu= rs.getString(4);
                 String tenLoaiDichVu= rs.getString(5);
                 double donGia = rs.getDouble(6);
-                
                 ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
                 DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
                 dsDichVu.add(dv);
@@ -42,14 +41,14 @@ public class DichVu_DAO {
 	}
 	public boolean themDichVu(DichVu dv)  {
         //thêm dịch vụ
-        ConnectDB.getInstance();
-        Connection con = ConnectDB.getConnection();
         PreparedStatement statement =null;
         String SQL = "DECLARE @n nvarchar(30)" +"\n"
         			+"SELECT @n = maLoaiDichVu FROM LoaiDichVu WHERE tenLoaiDichVu LIKE ?" + "\n"
         			+"insert into DichVu values(?,?,?,@n,?)";
         int n = 0;
         try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
 
             statement = con.prepareStatement(SQL);
             String ten= dv.getLoaiDichVu().getTenLoaiDichVu();
@@ -72,43 +71,25 @@ public class DichVu_DAO {
         }
         return n > 0;
     }
-	public boolean xoaDichVu(String maDV){
+
+    public boolean capNhatDichVu(DichVu dv) {
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
         PreparedStatement statement = null;
         int n = 0;
         try {
-            String SQL = "DELETE FROM DichVu WHERE maDichVu=?";
+        	String SQL = "DECLARE @ma nvarchar(30)" +"\n"
+        			+"SELECT @ma = maLoaiDichVu FROM LoaiDichVu WHERE tenLoaiDichVu LIKE ?" + "\n"
+        			+"update DichVu "+"\n"
+        			+ "set tenDichVu=?, soLuongTon=?, donGia=?, maLoaiDichVu= @ma"+"\n"
+        			+ "where maDichVu=?";
             statement = con.prepareStatement(SQL);
-            statement.setString(1,maDV);
-            n = statement.executeUpdate();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Không thể xóa dịch vụ");
-        }finally {
-            try {
-                statement.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-        return n > 0;
-    }
-	/*
-    TODO Cập nhật dịch vụ
-     */
-    public boolean capNhatDichVu(DichVu dichVu) {
-        ConnectDB.getInstance();
-        Connection con = ConnectDB.getConnection();
-        PreparedStatement statement = null;
-        int n = 0;
-        try {
-            String SQL = "UPDATE DichVu SET tenDichVu=?, soLuongTon=?, tenLoaiDichVu=?, donGia=? WHERE maDichVu=? ";
-            statement = con.prepareStatement(SQL);
-            statement.setString(1, dichVu.getTenDichVu());
-            statement.setInt(2, dichVu.getSoLuongTon());
-            statement.setString(3, dichVu.getLoaiDichVu().getTenLoaiDichVu());
-            statement.setDouble(4, dichVu.getDonGia());
-            statement.setString(5, dichVu.getMaDichVu());
+            String tenLDV= dv.getLoaiDichVu().getTenLoaiDichVu();
+            statement.setNString(1, "%"+ tenLDV +"%");
+            statement.setNString(2, dv.getTenDichVu());
+            statement.setInt(3, dv.getSoLuongTon());
+            statement.setDouble(4, dv.getDonGia());
+            statement.setNString(5, dv.getMaDichVu());
             n = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -121,17 +102,19 @@ public class DichVu_DAO {
         }
         return n > 0;
     }
-    //tim theo loai
-    public ArrayList<DichVu> getListDichVuByLoai(String loai) throws Exception {
+    //tim theo 1 tieu chi
+    
+    //Mã
+    public ArrayList<DichVu> getListDichVuByMa(String ma) throws Exception {
 		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		PreparedStatement preparedStatement = null;
+        ConnectDB.getInstance();
 		try {
-			ConnectDB.getInstance();
-	        Connection con = ConnectDB.getConnection();
-			PreparedStatement preparedStatement = null;
-			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"
-					+ "where ldv.tenLoaiDichVu like ?";
+            Connection con = ConnectDB.getConnection();
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where maDichVu like ?";
 			preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setNString(1, "%" + loai + "%");
+			preparedStatement.setNString(1, "%" + ma + "%");
 			ResultSet rs = preparedStatement.executeQuery();
 			while (rs.next()) {
                 String maDichVu = rs.getString(1);
@@ -147,17 +130,102 @@ public class DichVu_DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return dsDV;
 	}
-    //tim theo ma va loai
+    //Tên
+    public ArrayList<DichVu> getListDichVuByTen(String ten) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+		PreparedStatement preparedStatement = null;
+		try {
+		     Connection con = ConnectDB.getConnection();
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where tenDichVu like ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ten + "%");
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+    }
+	//Giá
+	public ArrayList<DichVu> getListDichVuByGia(double gia) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+		PreparedStatement preparedStatement = null;
+		try {
+		       Connection con = ConnectDB.getConnection();
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where donGia=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setDouble(1, gia);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+	//Loại
+    public ArrayList<DichVu> getListDichVuByLoai(String loai) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		try {
+			ConnectDB.getInstance();
+	        Connection con = ConnectDB.getConnection();
+			PreparedStatement preparedStatement = null;
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where ldv.tenLoaiDichVu like ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%"+loai+"%");
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    //Tìm theo 2 tiêu chí
+    
+    //Mã và loại
     public ArrayList<DichVu> getListDichVuByMaVaLoai(String loai, String ma) throws Exception {
 		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
 		ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
 		PreparedStatement preparedStatement = null;
 		try {
-			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
 					+ "where maDichVu like ? AND ldv.tenLoaiDichVu like ?";
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setNString(1, "%" + ma + "%");
@@ -179,14 +247,165 @@ public class DichVu_DAO {
 		}
 		return dsDV;
 	}
-    //tim theo ma ten va loai
+    //Mã và tên
+    public ArrayList<DichVu> getListDichVuByMaVaTen(String ten, String ma) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where maDichVu like ? AND tenDichVu like ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ma + "%");
+			preparedStatement.setNString(2, "%" + ten + "%");
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    
+    //Mã và giá
+    public ArrayList<DichVu> getListDichVuByMaVaGia(double gia, String ma) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where maDichVu like ? AND donGia=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ma + "%");
+			preparedStatement.setDouble(2, gia);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    
+    //Tên và loại
+    public ArrayList<DichVu> getListDichVuByTenVaLoai(String loai, String ten) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where tenDichVu like ? AND ldv.tenLoaiDichVu like ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ten + "%");
+			preparedStatement.setNString(2, "%" + loai + "%");
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    
+    //Tên và giá
+    public ArrayList<DichVu> getListDichVuByTenVaGia(String ten, double gia) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where tenDichVu like ? AND donGia=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ten + "%");
+			preparedStatement.setDouble(2, gia);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    
+    //Giá và loại
+    public ArrayList<DichVu> getListDichVuByGiaVaLoai(double gia, String loai) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where donGia=? AND ldv.tenLoaiDichVu like ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setDouble(1, gia);
+			preparedStatement.setNString(2, "%" + loai + "%");
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    //Tìm theo 3 tiêu chí
+    
+    //Mã tên và loại
     public ArrayList<DichVu> getListDichVuByMaTenVaLoai(String loai, String ma, String ten) throws Exception {
 		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
 		ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
 		PreparedStatement preparedStatement = null;
 		try {
-			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
 					+ "where maDichVu like ? AND tenDichVu like ? AND ldv.tenLoaiDichVu like ?";
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setNString(1, "%" + ma + "%");
@@ -209,6 +428,151 @@ public class DichVu_DAO {
 		}
 		return dsDV;
 	}
+    //Mã tên và giá
+    public ArrayList<DichVu> getListDichVuByMaTenVaGia(double gia, String ma, String ten) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where maDichVu like ? AND tenDichVu like ? AND donGia=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ma + "%");
+			preparedStatement.setNString(2, "%" + ten + "%");
+			preparedStatement.setDouble(3, gia);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    //Mã loại và giá
+    public ArrayList<DichVu> getListDichVuByMaLoaiVaGia(double gia, String ma, String loai) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where maDichVu like ? AND ldv.tenLoaiDichVu like ? AND donGia=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ma + "%");
+			preparedStatement.setNString(2, "%" + loai + "%");
+			preparedStatement.setDouble(3, gia);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    //Tên giá và loại
+    public ArrayList<DichVu> getListDichVuByTenGiaVaLoai(double gia, String ten, String loai) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where tenDichVu like ? AND ldv.tenLoaiDichVu like ? AND donGia=?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ten + "%");
+			preparedStatement.setNString(2, "%" + loai + "%");
+			preparedStatement.setDouble(3, gia);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+    //4 tiêu chí
+    public ArrayList<DichVu> getListDichVuByAll(double gia, String ten, String loai, String ma) throws Exception {
+		ArrayList<DichVu> dsDV = new ArrayList<DichVu>();
+		ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		try {
+			String sql = "SELECT maDichVu, tenDichVu, soLuongTon, ldv.maLoaiDichVu,ldv.tenLoaiDichVu, donGia from DichVu dv join LoaiDichVu ldv  on dv.maLoaiDichVu= ldv.maLoaiDichVu"+ "\n"
+					+ "where tenDichVu like ? AND ldv.tenLoaiDichVu like ? AND donGia=? AND maDichVu like ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setNString(1, "%" + ten + "%");
+			preparedStatement.setNString(2, "%" + loai + "%");
+			preparedStatement.setDouble(3, gia);
+			preparedStatement.setNString(4, "%" + ma + "%");
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+                String maDichVu = rs.getString(1);
+                String tenDichVu = rs.getString(2);
+                int soLuongTon = rs.getInt(3);
+                String maLoaiDichVu= rs.getString(4);
+                String tenLoaiDichVu= rs.getString(5);
+                double donGia = rs.getDouble(6);
+                LoaiDichVu ldv= new LoaiDichVu(maLoaiDichVu, tenLoaiDichVu);
+                DichVu dv= new DichVu(maDichVu, tenDichVu, soLuongTon, ldv, donGia);
+                dsDV.add(dv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsDV;
+	}
+
+    
+    //XóaTheoMã
+    public boolean xoaDichVuByMa(String maDV){
+        PreparedStatement statement = null;
+        int n = 0;
+        try {
+            ConnectDB.getInstance();
+            Connection con = ConnectDB.getConnection();
+            String SQL = "DELETE FROM DichVu WHERE maDichVu=?";
+            statement = con.prepareStatement(SQL);
+            statement.setString(1,maDV);
+            n = statement.executeUpdate();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Không thể xóa dịch vụ");
+        }finally {
+            try {
+                statement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
     public ArrayList<DichVu> getAllTableDichVuByTenLoaiDichVu(String dvTim) throws Exception {
 		ArrayList<DichVu> dsDichVu = new ArrayList<DichVu>();
 		try {

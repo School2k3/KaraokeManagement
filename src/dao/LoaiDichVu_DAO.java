@@ -15,6 +15,7 @@ import entity.LoaiDichVu;
 import entity.LoaiPhong;
 
 public class LoaiDichVu_DAO {
+	//Lấy danh sách tất cả dịch vụ
 	public ArrayList<LoaiDichVu> getAllTableLoaiDichVu() throws Exception{
 		ArrayList<LoaiDichVu> dsLoaiDichVu= new ArrayList<LoaiDichVu>();
 		try {
@@ -40,6 +41,7 @@ public class LoaiDichVu_DAO {
         }
         return dsLoaiDichVu;
 	}
+	//Thêm 1 dịch vụ
 	public boolean themLoaiDichVu(LoaiDichVu loaiDichVu)  {
         //thêm dịch vụ
         ConnectDB.getInstance();
@@ -65,6 +67,7 @@ public class LoaiDichVu_DAO {
         }
         return n > 0;
     }
+	//Cập nhật dịch vụ
     public boolean capNhatLoaiDichVu(LoaiDichVu loaiDichVu) {
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
@@ -87,6 +90,7 @@ public class LoaiDichVu_DAO {
         }
         return n > 0;
     }
+    //Xóa theo mã
 	public boolean xoaLoaiDichVuByMa(String maDV){
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
@@ -107,6 +111,7 @@ public class LoaiDichVu_DAO {
         }
         return n > 0;
     }
+	//Xóa theo tên
 	public boolean xoaLoaiDichVuByTen(String tenDichVu){
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
@@ -127,6 +132,7 @@ public class LoaiDichVu_DAO {
         }
         return n > 0;
     }
+	//Xóa theo mã và tên
 	public boolean xoaLoaiDichVuByMaVaTen(String maDV, String tenDV){
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
@@ -148,10 +154,11 @@ public class LoaiDichVu_DAO {
         }
         return n > 0;
     }
+	//lấy giá trị cho cmb loại dịch vụ
 	public ArrayList<LoaiDichVu> getCmbLoaiDichVu() throws Exception{
 		ArrayList<LoaiDichVu> dsLoaiDichVu = new ArrayList<LoaiDichVu>();
 		try {
-			ConnectDB.getInstance().connect();
+			ConnectDB.getInstance();
 			Connection con = ConnectDB.getConnection();
 			String sql = "select distinct maLoaiDichVu,tenLoaiDichVu from LoaiDichVu ";
 			Statement statement = con.createStatement();

@@ -321,23 +321,6 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnTimKiem)) {
-//			String tenTim = txtTimKiem.getText().trim();
-//			if (tenTim.equals("")) {
-//				JOptionPane.showMessageDialog(this, "Hãy nhâp thông tin cần tìm!");
-//			} else {
-//				try {
-//					List<Phong> list = phongDAO.getAllTablePhongByTenPhongOrTenLoaiPhong(tenTim);
-//					if (list.size() == 0) {
-//						JOptionPane.showMessageDialog(this, "Không tìm thấy");
-//					} else {
-//						modelPhong.getDataVector().removeAllElements();
-//						updateTableData_Phong();
-//					}
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//			}
 			String chuoiTim = "";
 			if (!txtTimKiem.getText().trim().equals("")) {
 //				chuoiTim += "tenPhong like '%" + txtTimKiem.getText() + "%'";
@@ -407,6 +390,7 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 							JOptionPane.showMessageDialog(this, "Bạn đã thêm phiếu đặt phòng thành công!");
 							phongDAO.updateTrangThai(maphong, "Đặt trước");
 							modelPhong.getDataVector().removeAllElements();
+							listPhong = phongDAO.getAllTablePhong();
 							updateTableData_Phong(listPhong);
 						}
 					}
@@ -493,11 +477,12 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 			int choice = JOptionPane.showConfirmDialog(null, "Bạn có xác nhận hủy phiếu này không?", "Xác nhận!",
 					JOptionPane.YES_NO_OPTION);
 			if (choice == JOptionPane.YES_OPTION) {
-//				int row = tblPhongDat.getRowCount();
-//				String maphong = tblPhongDat.getValueAt(row, 0).toString();
-//				modelPhongDat.getDataVector().removeAllElements();
-//				JOptionPane.showMessageDialog(this, "Đã hủy phiếu đặt phòng thành công!");
-//				phongDAO.updateTrangThai(maphong, "Trống");
+				int row = tblPhongDat.getRowCount();
+				String maphong = tblPhongDat.getValueAt(row, 0).toString();
+				modelPhongDat.getDataVector().removeAllElements();
+				JOptionPane.showMessageDialog(this, "Đã hủy phiếu đặt phòng thành công!");
+				phongDAO.updateTrangThai(maphong, "Trống");
+//				phieuDatPhongDAO.updateTrangThai(maphong, maphong)
 			}
 		} else if (o.equals(cmbTrangThai)) { // Lọc các trạng thái của phòng
 			String ttTim = cmbTrangThai.getSelectedItem().toString();

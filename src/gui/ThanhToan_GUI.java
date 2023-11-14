@@ -48,6 +48,7 @@ import entity.HoaDon;
 import entity.KhachHang;
 import entity.LoaiDichVu;
 import entity.LoaiPhong;
+import entity.NhanVien;
 import entity.PhieuDatPhong;
 import entity.Phong;
 import javax.swing.DefaultComboBoxModel;
@@ -62,6 +63,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 	private JComboBox cmbLoaiDichVu;
 	private DecimalFormat df;
 	private Frm_HoaDon winHoaDon;
+	private NhanVien nhanVien = null;
 	private Phong_DAO phongDAO;
 	private LoaiPhong_DAO loaiPhongDAO;
 	private DichVu_DAO dichVuDAO;
@@ -77,6 +79,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 	private List<PhieuDatPhong> listPhieuDatPhong;
 	private List<KhachHang> listKhachHang;
 	private List<HoaDon> listHoaDon;
+	private List<HoaDon> listHoaDonChuaThanhToan;
 	private List<ChiTietHoaDon> listChiTietHoaDon;
 
 	/**
@@ -84,7 +87,8 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 	 * 
 	 * @throws Exception
 	 */
-	public ThanhToan_GUI() throws Exception {
+	public ThanhToan_GUI(NhanVien nhanVien) throws Exception {
+		this.nhanVien = nhanVien;
 		// Kết nối với ConnectDB
 		try {
 			ConnectDB.getInstance().connect();
@@ -330,12 +334,13 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 		listPhieuDatPhong = phieuDatPhongDAO.getAllPhieuDatPhong();
 		listKhachHang = khachHangDAO.getAllTableKhachHang();
 		listHoaDon = hoaDonDAO.getAllHoaDon();
+		listHoaDonChuaThanhToan = hoaDonDAO.getAllHoaDonChuaThanhToan();
 		listChiTietHoaDon = chiTietHoaDonDAO.getAllChiTietHoaDon();
 
 		updateTableData_DichVu(listDichVu);
 		updateComboBox_LoaiDichVu();
 		modelHoaDon.getDataVector().removeAllElements();
-		updateTableData_HoaDon(listHoaDon);
+		updateTableData_HoaDon(listHoaDonChuaThanhToan);
 
 		// Thêm sự kiện cho các nút và combobox
 		btnTimKiem.addActionListener(this);
@@ -455,7 +460,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 			if (hoTenKhachHang.equals("")) {
 				JOptionPane.showMessageDialog(this, "Hãy nhập tên khách hàng cần tìm kiếm!");
 			} else {
-				chuoiTim += "kh.hoTenKhachHang like '%" + txtTimKiem.getText() + "%'";
+				chuoiTim += "kh.hoTenKhachHang like N'%" + txtTimKiem.getText() + "%'";
 				List<HoaDon> dsHoaDonByHoTenKH;
 				try {
 					dsHoaDonByHoTenKH = hoaDonDAO.getAllHoaDonByTenKhachHang(chuoiTim);
@@ -471,10 +476,10 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 				}
 			}
 		} else if (o.equals(btnLamMoi)) {
-			listHoaDon = hoaDonDAO.getAllHoaDon();
+			listHoaDonChuaThanhToan = hoaDonDAO.getAllHoaDonChuaThanhToan();
 			listChiTietHoaDon = chiTietHoaDonDAO.getAllChiTietHoaDon();
 			modelHoaDon.getDataVector().removeAllElements();
-			updateTableData_HoaDon(listHoaDon);
+			updateTableData_HoaDon(listHoaDonChuaThanhToan);
 		} else if (o.equals(btnThemDichVuVaoHoaDon)) {
 
 		} else if (o.equals(btnTraPhong)) {
@@ -505,6 +510,11 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 			double thue = 0.1 * tongTienPhongVaDichVu;
 			double tongTienHoaDon = tongTienPhongVaDichVu + thue;
 			txtTongTien.setText(df.format(tongTienHoaDon));
+			phongDAO.updateTrangThai(maphong, "Trống");
+			JOptionPane.showMessageDialog(this, "Đã trả phòng này!");
+			listHoaDonChuaThanhToan = hoaDonDAO.getAllHoaDonChuaThanhToan();
+			updateTableData_HoaDon(listHoaDonChuaThanhToan);
+			System.out.println(thoigiantra);
 			System.out.println(hour);
 			System.out.println(df.format(tienPhong));
 			System.out.println(tinhTongTienDichVu());
@@ -531,7 +541,6 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
-						JOptionPane.showMessageDialog(winHoaDon, "Đã thanh toán hóa đơn này!");
 						winHoaDon.btnInHoaDon.setEnabled(true);
 						winHoaDon.btnThanhToan.setEnabled(false);
 					}
@@ -593,7 +602,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 			cmbLoaiDichVu.addItem(ldv.getTenLoaiDichVu());
 		}
 	}
-
+	
 	private String formatDatetime(Date currentDate) {
 		// Định dạng theo mẫu yyyy-MM-dd HH:mm:ss
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -601,7 +610,10 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 		// Chuyển đổi và in ra ngày giờ theo định dạng
 		return sdf.format(currentDate);
 	}
-
+	
+	/*
+	 * Hàm để tính tổng tiền dịch vụ mà khách hàng đã đặt
+	 */
 	private double tinhTongTienDichVu() {
 		int row = tblHoaDon.getSelectedRow();
 		double thanhTienDichVu = 0.0;
@@ -612,7 +624,10 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 		}
 		return thanhTienDichVu;
 	}
-
+	
+	/*
+	 * Hàm để tính giờ đặt phòng cho khách hàng (thoiGianKetThuc - thoiGianBatDau)
+	 */
 	private double tinhGioDatPhong() {
 		int row = tblHoaDon.getSelectedRow();
 		double minute = 0.0;
@@ -628,6 +643,9 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 		return minute * 1.0 / 4.0;
 	}
 	
+	/*
+	 * Hàm để hiển thị thời gian sử dụng chính xác
+	 */
     public String tinhThoiGianSuDung() {
 		int row = tblHoaDon.getSelectedRow();
 		double minute = 0.0;
@@ -675,16 +693,19 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 	private void hienThiThongTinHoaDon() {
 		int row = tblHoaDon.getSelectedRow();
 		int count = 1;
+		listHoaDon = hoaDonDAO.getAllHoaDon();
 		String maHoaDon = tblHoaDon.getValueAt(row, 0).toString();
-		String nhanVienLap = "Ngô Quang Trường";
+		String nhanVienLap = nhanVien.getHoTenNhanVien();
 		String khachHang = lblHienThiTenKhachHang.getText();
 		String tenPhong = tblHoaDon.getValueAt(row, 1).toString();
 		String maPhong = "";
 		String loaiPhong = "";
 		double dongia = 0.0;
+		// khởi tạo 2 giá trị thời gian mặc định là ngày hiện tại
 		Timestamp thoiGianBatDau = new Timestamp(System.currentTimeMillis());
 		Timestamp thoiGianKetThuc = new Timestamp(System.currentTimeMillis());
 		String thoiGianSuDung = tinhThoiGianSuDung();
+		// Chạy vòng lặp để lấy mã phòng và đơn giá
 		for (Phong p : listPhong) {
 			if (p.getTenPhong().equals(tenPhong)) {
 				loaiPhong = p.getLoaiPhong().getTenLoaiPhong();
@@ -693,6 +714,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 				break;
 			}
 		}
+		// Chạy vòng lặp để lấy thời gian bắt đầu và thời gian kết thúc
 		for (HoaDon hd : listHoaDon) {
 			if (hd.getMaHoaDon().equals(maHoaDon)) {
 				thoiGianBatDau = hd.getThoiGianBatDau();
@@ -700,6 +722,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 				break;
 			}
 		}
+		// Truyền các thuộc tính vào trong kiểu HoaDon để thực hiện việc tính toán các số liệu hiển thị trong thông tin hóa đơn
 		HoaDon hoaDon = new HoaDon(maHoaDon, new Phong(maPhong, dongia));
 		double hour = tinhGioDatPhong();
 		double tienPhong = hoaDon.tinhTienPhong(hour);
@@ -708,6 +731,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 		double thue = 0.1 * tongTienPhongVaDichVu;
 		double tongTienHoaDon = tongTienPhongVaDichVu + thue;
 		double tienKhachDua = Double.parseDouble(txtTienKhachDua.getText().replace(",", ""));
+		// Hiển thị các dữ liệu đã được tính toán sang phần thông tin hóa đơn
 		winHoaDon.txtMaHoaDon.setText(maHoaDon);
 		winHoaDon.txtNhanVienLap.setText(nhanVienLap);
 		winHoaDon.txtKhachHang.setText(khachHang);
@@ -717,6 +741,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 		winHoaDon.txtThoiGianBatDau.setText(formatDatetime(thoiGianBatDau));
 		winHoaDon.txtThoiGianKetThuc.setText(formatDatetime(thoiGianKetThuc));
 		winHoaDon.txtThoiGianSuDung.setText(thoiGianSuDung);
+		// Hiển thị danh sách các dịch vụ mà khách hàng đã đặt
 		for (ChiTietHoaDon cthd : listChiTietHoaDon) {
 			String mahd = cthd.getHoaDon().getMaHoaDon();
 			if (tblHoaDon.getValueAt(row, 0).toString().equals(mahd)) {
@@ -725,6 +750,7 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 				count++;
 			}
 		}
+		// Hiển thị các giá trị: tiền phòng, tiền dịch vụ, thuế VAT, tổng tiền hóa đơn và tiền thừa
 		winHoaDon.txtTienPhong.setText(df.format(tienPhong));
 		winHoaDon.txtTienDichVu.setText(df.format(tienDichVu));
 		winHoaDon.txtThueVAT.setText(df.format(thue));
@@ -736,15 +762,17 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 	 * Hàm tính tiền thừa cho khách hàng
 	 */
 	public void tinhTienThua() {
+		// Xét trường hợp giá trị tiền khách trả không phải là chữ số
 		if (txtTienKhachDua.getText().trim().matches("^\\d+$")) {
 			double tienKhachDua = Double.parseDouble(txtTienKhachDua.getText().replace(",", ""));
 			double tongTien = Double.parseDouble(txtTongTien.getText().replace(",", ""));
+			// Xét trường hợp nhập tiền khách đưa bé hơn tổng tiền cần trả
 			if (tienKhachDua < tongTien) {
 				JOptionPane.showMessageDialog(this, "Tiền khách đưa phải >= tổng tiền");
 				txtTienKhachDua.selectAll();
 				txtTienKhachDua.requestFocus();
 				txtTienKhachDua.removeAll();
-
+				// Trường hợp nếu khung tiền khách trả khác rỗng và lớn hơn tổng tiền hóa đơn
 			} else if (!txtTongTien.getText().equals("")) {
 				if (tienKhachDua >= tongTien) {
 					txtTienThua.setText(df.format(tienKhachDua - tongTien));

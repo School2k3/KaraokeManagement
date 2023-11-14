@@ -52,6 +52,38 @@ public class HoaDon_DAO {
 	}
 	
 	/*
+	 * Lấy danh sách tất cả các hóa đơn chưa thanh toán từ database
+	 */
+	public List<HoaDon> getAllHoaDonChuaThanhToan() {
+		List<HoaDon> dsHD = new ArrayList<HoaDon>();
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		try {
+			String sql = "Select maHoaDon, hd.maKhachHang, kh.hoTenKhachHang, kh.soDienThoai, hd.maNhanVien, hd.maPhong, p.tenPhong, thoiGianBatDau, thoiGianKetThuc, hd.trangThai from HoaDon hd join KhachHang kh on hd.maKhachHang = kh.maKhachHang join NhanVien nv on hd.maNhanVien = nv.maNhanVien join Phong p on hd.maPhong = p.maPhong where hd.trangThai = N'Chưa thanh toán'";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				String maHoaDon = rs.getString("maHoaDon");
+				KhachHang maKhachHang = new KhachHang(rs.getString("maKhachHang"), rs.getString("hoTenKhachHang"), rs.getString("soDienThoai"));
+				NhanVien maNhanVien = new NhanVien(rs.getString("maNhanVien"));
+				Phong maPhong = new Phong(rs.getString("maPhong"), rs.getString("tenPhong"));
+				Timestamp thoiGianBatDau = rs.getTimestamp("thoiGianBatDau");
+				Timestamp thoiGianKetThuc = rs.getTimestamp("thoiGianKetThuc");
+				String trangThai = rs.getString("trangThai");
+				
+				HoaDon hd = new HoaDon(maHoaDon, maKhachHang, maNhanVien, maPhong, thoiGianBatDau, thoiGianKetThuc, trangThai);
+				dsHD.add(hd);
+			}
+			statement.close();
+			rs.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return dsHD;
+	}
+	
+	/*
 	 * Lấy hóa đơn theo mã hóa đơn từ database
 	 */
 	public List<HoaDon> getAllHoaDonByMaHoaDon(String maTim) {
@@ -184,9 +216,9 @@ public class HoaDon_DAO {
         PreparedStatement preparedStatement = null;
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
-        String query = "update HoaDon set trangThai = ? where maHoaDon = ?";
+        String sql = "update HoaDon set trangThai = ? where maHoaDon = ?";
         try {
-        	preparedStatement = con.prepareStatement(query);
+        	preparedStatement = con.prepareStatement(sql);
         	preparedStatement.setString(1, trangThai);
         	preparedStatement.setString(2, maHoaDon);
             n = preparedStatement.executeUpdate();
@@ -210,9 +242,9 @@ public class HoaDon_DAO {
         PreparedStatement preparedStatement = null;
         ConnectDB.getInstance();
         Connection con = ConnectDB.getConnection();
-        String query = "update HoaDon set thoiGianKetThuc = ? where maHoaDon = ?";
+        String sql = "update HoaDon set thoiGianKetThuc = ? where maHoaDon = ?";
         try {
-        	preparedStatement = con.prepareStatement(query);
+        	preparedStatement = con.prepareStatement(sql);
         	preparedStatement.setTimestamp(1, thoiGianKetThuc);
         	preparedStatement.setString(2, maHoaDon);
             n = preparedStatement.executeUpdate();

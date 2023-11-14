@@ -244,8 +244,8 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 	}
 
 	private String formatDate(Date currentDate) {
-		// Định dạng theo mẫu yyyy-MM-dd
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		// Định dạng theo mẫu dd-MM-yyyy
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
 		// Chuyển đổi và in ra ngày giờ theo định dạng
 		return sdf.format(currentDate);

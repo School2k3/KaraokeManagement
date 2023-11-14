@@ -46,32 +46,21 @@ public class DichVu {
 		return donGia;
 	}
 	public void setMaDichVu(String maDichVu) throws Exception {
-		if(!maDichVu.trim().equals(""))
 		this.maDichVu = maDichVu;
-		else
-			throw new Exception("Lỗi mã dịch vụ không được rỗng!");
 	}
 	public void setTenDichVu(String tenDichVu) throws Exception {
-		if(!tenDichVu.trim().equals(""))
 			this.tenDichVu = tenDichVu;
-			else
-				throw new Exception("Lỗi tên dịch vụ không được rỗng!");
 	}
 	public void setSoLuongTon(int soLuongTon)throws Exception {
-		if(soLuongTon>=0)
 		this.soLuongTon = soLuongTon;
-		else
-			throw new Exception("lỗi số lượng tồn không được nhỏ hơn 0!");
+
 	}
 	public void setLoaiDichVu(LoaiDichVu loaiDichVu) {
 			this.loaiDichVu = loaiDichVu;
 
 	}
 	public void setDonGia(double donGia)throws Exception {
-		if(donGia>=0)
 			this.donGia = donGia;
-			else
-				throw new Exception("Đơn giá không được nhỏ hơn 0!");
 	}
 
 	@Override
@@ -80,13 +69,14 @@ public class DichVu {
 				+ ", soLuongTon=" + soLuongTon + ", loaiDichVu=" + loaiDichVu
 				+ ", donGia=" + donGia + "]";
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((maDichVu == null) ? 0 : maDichVu.hashCode());
+		result = prime * result
+				+ ((tenDichVu == null) ? 0 : tenDichVu.hashCode());
 		return result;
 	}
 	@Override
@@ -102,6 +92,11 @@ public class DichVu {
 			if (other.maDichVu != null)
 				return false;
 		} else if (!maDichVu.equals(other.maDichVu))
+			return false;
+		if (tenDichVu == null) {
+			if (other.tenDichVu != null)
+				return false;
+		} else if (!tenDichVu.equals(other.tenDichVu))
 			return false;
 		return true;
 	}
