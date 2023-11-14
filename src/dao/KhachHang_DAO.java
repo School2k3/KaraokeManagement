@@ -70,6 +70,27 @@ public class KhachHang_DAO {
 		}
 		return arlKhachHangByMa;
 	}
+	
+	// Tìm kiếm khách hàng theo mã khách hàng
+	public KhachHang getKhachHangByMaKhachHang(String maKhachHang) throws Exception {
+		KhachHang khachHang = null;
+		ConnectDB.getInstance();
+		PreparedStatement preparedStatement = null;
+		try {
+			Connection con = ConnectDB.getConnection();
+			String sql = "Select * from [dbo].[KhachHang] where maKhachHang = ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setString(1, maKhachHang);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				khachHang = new KhachHang(rs);
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return khachHang;
+	}
 
 	// Tìm kiếm theo họ tên khách hàng
 	public ArrayList<KhachHang> getListKhachHangByHoTenKhachHang(String hoTenKhachHang) throws Exception {

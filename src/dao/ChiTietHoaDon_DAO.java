@@ -57,13 +57,13 @@ public class ChiTietHoaDon_DAO {
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
 		try {
-			String sql = "Select * from ChiTietHoaDon where maHoaDon = ?";
+			String sql = "Select cthd.maHoaDon, cthd.maDichVu, dv.tenDichVu, cthd.soLuong, cthd.donGia from ChiTietHoaDon cthd join HoaDon hd on cthd.maHoaDon = hd.maHoaDon join DichVu dv on cthd.maDichVu = dv.maDichVu where cthd.maHoaDon = ?";
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setString(1, maTim);
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				HoaDon maHoaDon = new HoaDon(rs.getString("maHoaDon"));
-				DichVu maDichVu = new DichVu(rs.getString("maDichVu"));
+				DichVu maDichVu = new DichVu(rs.getString("maDichVu"), rs.getString("tenDichVu"));
 				int soLuong = rs.getInt("soLuong");
 				double donGia = rs.getDouble("donGia");
 

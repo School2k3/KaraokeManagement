@@ -15,11 +15,13 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import dao.HoaDon_DAO;
+import gui.XuatHoaDonPDF;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -28,7 +30,9 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlFull;
-	public JTextField txtMaHoaDon, txtNhanVienLap, txtKhachHang, txtTenPhong, txtLoaiPhong, txtDonGia, txtThoiGianBatDau, txtThoiGianKetThuc, txtThoiGianSuDung, txtTienPhong, txtTienDichVu, txtThueVAT, txtTongTien, txtTienThua;
+	public JTextField txtMaHoaDon, txtNhanVienLap, txtKhachHang, txtTenPhong, txtLoaiPhong, txtDonGia,
+			txtThoiGianBatDau, txtThoiGianKetThuc, txtThoiGianSuDung, txtTienPhong, txtTienDichVu, txtThueVAT,
+			txtTongTien, txtTienThua;
 	public DefaultTableModel modelChiTietDichVu;
 	public JTable tblChiTietDichVu;
 	public JButton btnThanhToan, btnInHoaDon, btnQuayLai;
@@ -52,7 +56,8 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 
 	/**
 	 * Create the frame.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public Frm_HoaDon() throws Exception {
 		// Thiết kế kích cỡ cho hóa đơn
@@ -64,9 +69,9 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 		setContentPane(pnlFull);
 		pnlFull.setLayout(null);
 
-		JLabel lblTitleKaraoke = new JLabel("Karaoke 3T");
+		JLabel lblTitleKaraoke = new JLabel("Karaoke Nice");
 		lblTitleKaraoke.setFont(new Font("SansSerif", Font.BOLD, 40));
-		lblTitleKaraoke.setBounds(485, 0, 214, 52);
+		lblTitleKaraoke.setBounds(466, 0, 252, 52);
 		pnlFull.add(lblTitleKaraoke);
 
 		JLabel lblTitleHoaDon = new JLabel("Hóa đơn");
@@ -74,14 +79,14 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 		lblTitleHoaDon.setBounds(511, 124, 161, 52);
 		pnlFull.add(lblTitleHoaDon);
 
-		JLabel lblDiaChiKaraoke = new JLabel("12 Nguyễn Văn Bảo, phường 4, quận Gò Vấp, TP HCM");
+		JLabel lblDiaChiKaraoke = new JLabel("12 Nguyễn Văn Bảo, phường 4, quận Gò Vấp, TP.HCM");
 		lblDiaChiKaraoke.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		lblDiaChiKaraoke.setBounds(350, 52, 486, 26);
+		lblDiaChiKaraoke.setBounds(349, 52, 486, 26);
 		pnlFull.add(lblDiaChiKaraoke);
 
 		JLabel lblSoDienThoaiKaraoke = new JLabel("090.963.1257");
 		lblSoDienThoaiKaraoke.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		lblSoDienThoaiKaraoke.setBounds(530, 89, 122, 26);
+		lblSoDienThoaiKaraoke.setBounds(531, 89, 122, 26);
 		pnlFull.add(lblSoDienThoaiKaraoke);
 
 		JPanel pnlThongTinHoaDon = new JPanel();
@@ -201,7 +206,8 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 
 		// Tạo bảng chi tiết dịch vụ
 		JPanel pnlTableChiTietDichVu = new JPanel();
-		pnlTableChiTietDichVu.setBorder(new TitledBorder(null, "Thông tin chi tiết dịch vụ đã đặt", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pnlTableChiTietDichVu.setBorder(new TitledBorder(null, "Thông tin chi tiết dịch vụ đã đặt",
+				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnlTableChiTietDichVu.setBounds(40, 426, 1100, 250);
 		pnlFull.add(pnlTableChiTietDichVu);
 		pnlTableChiTietDichVu.setLayout(null);
@@ -217,87 +223,87 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 		tblChiTietDichVu.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblChiTietDichVu.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
 		pnlTableChiTietDichVu.add(scrPhongDat);
-		
+
 		// Thêm các nút cho giao diện
 		btnThanhToan = new JButton("Thanh toán");
 		btnThanhToan.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnThanhToan.setBounds(131, 916, 231, 34);
 		pnlFull.add(btnThanhToan);
-		
+
 		btnInHoaDon = new JButton("In hóa đơn");
-		btnInHoaDon.setEnabled(false);
+//		btnInHoaDon.setEnabled(false);
 		btnInHoaDon.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnInHoaDon.setBounds(492, 916, 231, 34);
 		pnlFull.add(btnInHoaDon);
-		
+
 		btnQuayLai = new JButton("Quay lại");
 		btnQuayLai.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnQuayLai.setBounds(853, 916, 200, 34);
 		pnlFull.add(btnQuayLai);
-		
+
 		// Thêm các thông tin tính tiền hóa đơn cho giao diện
 		JLabel lblTienPhong = new JLabel("Tiền phòng (VNĐ)");
 		lblTienPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		lblTienPhong.setBounds(75, 687, 275, 31);
 		pnlFull.add(lblTienPhong);
-		
+
 		txtTienPhong = new JTextField();
 		txtTienPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		txtTienPhong.setEditable(false);
 		txtTienPhong.setColumns(10);
 		txtTienPhong.setBounds(735, 687, 352, 31);
 		pnlFull.add(txtTienPhong);
-		
+
 		JLabel lblTienDichVu = new JLabel("Tiền dịch vụ (VNĐ)");
 		lblTienDichVu.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		lblTienDichVu.setBounds(75, 729, 275, 31);
 		pnlFull.add(lblTienDichVu);
-		
+
 		txtTienDichVu = new JTextField();
 		txtTienDichVu.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		txtTienDichVu.setEditable(false);
 		txtTienDichVu.setColumns(10);
 		txtTienDichVu.setBounds(735, 729, 352, 31);
 		pnlFull.add(txtTienDichVu);
-		
+
 		JLabel lblThueVAT = new JLabel("Thuế VAT (10%) (VNĐ)");
 		lblThueVAT.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		lblThueVAT.setBounds(75, 771, 275, 31);
 		pnlFull.add(lblThueVAT);
-		
+
 		txtThueVAT = new JTextField();
 		txtThueVAT.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		txtThueVAT.setEditable(false);
 		txtThueVAT.setColumns(10);
 		txtThueVAT.setBounds(735, 771, 352, 31);
 		pnlFull.add(txtThueVAT);
-		
+
 		JLabel lblTongTien = new JLabel("Tổng tiền cần thanh toán (VNĐ)");
 		lblTongTien.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		lblTongTien.setBounds(76, 813, 275, 31);
 		pnlFull.add(lblTongTien);
-		
+
 		txtTongTien = new JTextField();
 		txtTongTien.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		txtTongTien.setEditable(false);
 		txtTongTien.setColumns(10);
 		txtTongTien.setBounds(736, 813, 352, 31);
 		pnlFull.add(txtTongTien);
-		
+
 		JLabel lblTienThua = new JLabel("Tiền thừa (VNĐ)");
 		lblTienThua.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		lblTienThua.setBounds(76, 855, 275, 31);
 		pnlFull.add(lblTienThua);
-		
+
 		txtTienThua = new JTextField();
 		txtTienThua.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		txtTienThua.setEditable(false);
 		txtTienThua.setColumns(10);
 		txtTienThua.setBounds(736, 855, 352, 31);
 		pnlFull.add(txtTienThua);
-		
+
 		hoaDonDAO = new HoaDon_DAO();
-		
+
 		// Thiết lập các sự kiện cho các nút
 		btnThanhToan.addActionListener(this);
 		btnInHoaDon.addActionListener(this);
@@ -313,12 +319,28 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 			String maHoaDon = txtMaHoaDon.getText();
 			hoaDonDAO.updateTrangThai(maHoaDon, "Đã thanh toán");
 		} else if (o.equals(btnInHoaDon)) {
-			
+			try {
+				// Khởi tạo class mới tên là XuatHoaDonPDF và truyền chuỗi vào
+				new XuatHoaDonPDF(txtMaHoaDon.getText().trim()+"-"+txtTienPhong.getText()+"-"+txtTienDichVu.getText()+"-"+txtTongTien.getText()+"-"+txtThueVAT.getText()+"-"+txtTienThua.getText());
+				// Tạo 1 dường dẫn có sẵn trong máy tính
+				String path = "D:/hoadon/" + txtMaHoaDon.getText().trim() + "_" + txtKhachHang.getText().trim()
+						+ ".pdf";
+				// Truyền dường dẫn đó vào 1 biến có kiểu File
+				File file = new File(path);
+				// Xét trường hợp nếu file tồn tại thì chạy file, nếu không tồn tại thì xuất ra thông báo
+				if (file.exists()) {
+					Process process = Runtime.getRuntime().exec("rundll32 url.dll, FileProtocolHandler " + path);
+					process.waitFor();
+				} else
+					JOptionPane.showMessageDialog(this, "File không tồn tại!");
+
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			}
 		} else if (o.equals(btnQuayLai)) {
 			this.dispose();
 		}
 	}
 
-
-	
 }

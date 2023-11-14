@@ -631,11 +631,11 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
 	private double tinhGioDatPhong() {
 		int row = tblHoaDon.getSelectedRow();
 		double minute = 0.0;
-		List<HoaDon> listHD = hoaDonDAO.getAllHoaDonByMaHoaDon(tblHoaDon.getValueAt(row, 0).toString());
-		for (HoaDon hd : listHD) {
-			long duration = hd.getThoiGianKetThuc().getTime() - hd.getThoiGianBatDau().getTime();
-			minute = TimeUnit.MILLISECONDS.toMinutes(duration);
-		}
+		HoaDon hd = hoaDonDAO.getAllHoaDonByMaHoaDon(tblHoaDon.getValueAt(row, 0).toString());
+
+		long duration = hd.getThoiGianKetThuc().getTime() - hd.getThoiGianBatDau().getTime();
+		minute = TimeUnit.MILLISECONDS.toMinutes(duration);
+
 		if (minute <= 60) {
 			minute = 60;
 		}
@@ -649,11 +649,11 @@ public class ThanhToan_GUI extends JPanel implements ActionListener, MouseListen
     public String tinhThoiGianSuDung() {
 		int row = tblHoaDon.getSelectedRow();
 		double minute = 0.0;
-		List<HoaDon> listHD = hoaDonDAO.getAllHoaDonByMaHoaDon(tblHoaDon.getValueAt(row, 0).toString());
-		for (HoaDon hd : listHD) {
-			long duration = hd.getThoiGianKetThuc().getTime() - hd.getThoiGianBatDau().getTime();
-			minute = TimeUnit.MILLISECONDS.toMinutes(duration);
-		}
+		HoaDon hd = hoaDonDAO.getAllHoaDonByMaHoaDon(tblHoaDon.getValueAt(row, 0).toString());
+
+		long duration = hd.getThoiGianKetThuc().getTime() - hd.getThoiGianBatDau().getTime();
+		minute = TimeUnit.MILLISECONDS.toMinutes(duration);
+
 		if (minute <= 60) {
 			minute = 60;
 		}

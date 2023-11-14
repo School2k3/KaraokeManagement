@@ -223,7 +223,6 @@ public class DangNhap_GUI extends JFrame implements ActionListener, MouseListene
 			if (valid()) {
 				try {
 					if (checkAccount(soDienThoai, matKhau)) {
-						JOptionPane.showMessageDialog(this, "Đang nhập thành công!");
 						this.dispose();
 						winTrangChu = new TrangChu_GUI(nhanVien);
 						winTrangChu.setLocationRelativeTo(null);

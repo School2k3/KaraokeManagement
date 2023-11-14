@@ -52,6 +52,37 @@ public class NhanVien_DAO {
 		return arlNhanVien;
 	}
 	
+	public NhanVien getNhanVienByMaNhanVien(String maNV) throws Exception{
+		NhanVien nhanVien = null;
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select * from [dbo].[NhanVien] where maNhanVien = ?";
+			preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setString(1, maNV);
+			rs = preparedStatement.executeQuery();
+			while(rs.next()) {
+				String maNhanVien = rs.getString(1);
+				String hoTenNhanVien = rs.getString(2);
+				String gioiTinh = rs.getString(3);
+				int namSinh = rs.getInt(4);
+				String diaChi = rs.getString(5);
+				String soDienThoai = rs.getString(6);
+				String canCuocCongDan = rs.getString(7);
+				String matKhau = rs.getString(8);
+				String chucVu = rs.getString(9);
+				
+				nhanVien = new NhanVien(maNhanVien, hoTenNhanVien, gioiTinh, namSinh, diaChi, soDienThoai, canCuocCongDan, matKhau, chucVu);
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return nhanVien;
+	}
+	
 	/*
 	 * Hàm để kiểm tra thông tin đăng nhập bao gồm số diện thoại nhân viên và mật khẩu
 	 */

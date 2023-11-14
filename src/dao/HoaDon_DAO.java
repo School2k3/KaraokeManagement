@@ -86,8 +86,8 @@ public class HoaDon_DAO {
 	/*
 	 * Lấy hóa đơn theo mã hóa đơn từ database
 	 */
-	public List<HoaDon> getAllHoaDonByMaHoaDon(String maTim) {
-		List<HoaDon> dsHD = new ArrayList<HoaDon>();
+	public HoaDon getAllHoaDonByMaHoaDon(String maTim) {
+		HoaDon hoaDon = null;
 		ConnectDB.getInstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement preparedStatement = null;
@@ -106,8 +106,7 @@ public class HoaDon_DAO {
 				Timestamp thoiGianKetThuc = rs.getTimestamp("thoiGianKetThuc");
 				String trangThai = rs.getString("trangThai");
 				
-				HoaDon hd = new HoaDon(maHoaDon, maKhachHang, maNhanVien, maPhong, thoiGianBatDau, thoiGianKetThuc, trangThai);
-				dsHD.add(hd);
+				hoaDon = new HoaDon(maHoaDon, maKhachHang, maNhanVien, maPhong, thoiGianBatDau, thoiGianKetThuc, trangThai);
 			}
 			preparedStatement.close();
 			rs.close();
@@ -115,7 +114,7 @@ public class HoaDon_DAO {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return dsHD;
+		return hoaDon;
 	}
 	
 	/*
