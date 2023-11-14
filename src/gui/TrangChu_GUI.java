@@ -33,7 +33,7 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	private JMenuItem mniCapNhatPhong, mniCapNhatLoaiPhong, mniTimPhong, mniDatPhong,
-						mniCapNhatDichVu, mniCapNhatLoaiDichVu, mniTimDichVu, mniThongKeDichVu,
+						mniCapNhatDichVu, mniCapNhatLoaiDichVu, mniTimDichVu, mniDatDichVu, mniThongKeDichVu,
 						mniCapNhatKhachHang, mniTimKiemKhachHang, mniThongKeKhachHang, 
 						mniCapNhatNhanVien, mniTimKiemNhanVien, mniThongKeSoLuongHoaDon,
 						mniLapHoaDon, mniThanhToan, mniThongKeDoanhThu;
@@ -193,6 +193,11 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		mniTimDichVu.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 		mnDichVu.add(mniTimDichVu);
 		
+		mniDatDichVu = new JMenuItem("Đặt dịch vụ");
+		mniDatDichVu.setPreferredSize(new Dimension(dms1, dms2));
+		mniDatDichVu.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+		mnDichVu.add(mniDatDichVu);
+		
 		// Menu Khách hàng
 		mniCapNhatKhachHang = new JMenuItem("Cập nhật khách hàng");
 		mniCapNhatKhachHang.setPreferredSize(new Dimension(dms1, dms2));
@@ -285,7 +290,7 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		pnlTimKiemPhong.setLayout(null);
 		
 		// JPanel đặt phòng
-		DatPhong_GUI pnlDatPhong = new DatPhong_GUI();
+		DatPhong_GUI pnlDatPhong = new DatPhong_GUI(nhanVien);
 		tabbedPane.addTab("DatPhong", null, pnlDatPhong, null);
 		pnlDatPhong.setLayout(null);
 		
@@ -432,6 +437,11 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		tabbedPane.addTab("ThanhToan", null, pnlThanhToan, null);
 		pnlThanhToan.setLayout(null);
 		
+		// JPanel Đặt dịch vụ
+		DatDichVu_GUI pnlDatDichVu = new DatDichVu_GUI();
+		tabbedPane.addTab("DatDichVu", null, pnlDatDichVu, null);
+		pnlDatDichVu.setLayout(null);
+		
 		// Hiển thị tên nhân viên và chức vụ sau khi đăng nhập thành công
 		nhanVienDAO = new NhanVien_DAO();
 		listNhanVien = nhanVienDAO.getAllTableNhanVien();
@@ -448,6 +458,7 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		mniCapNhatDichVu.addActionListener(this);
 		mniCapNhatLoaiDichVu.addActionListener(this);
 		mniTimDichVu.addActionListener(this);
+		mniDatDichVu.addActionListener(this);
 		mniThongKeDichVu.addActionListener(this);
 		mniCapNhatKhachHang.addActionListener(this);
 		mniTimKiemKhachHang.addActionListener(this);
@@ -463,6 +474,7 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		// Thêm sự kiện vào từng JButton
 		btnChonKhachHang_DatPhong.addActionListener(this);
 		btnDatPhong.addActionListener(this);
+		btnDangXuat.addActionListener(this);
 	}
 
 	@Override
@@ -519,6 +531,17 @@ public class TrangChu_GUI extends JFrame implements ActionListener{
 		}
 		else if (o.equals(mniThanhToan)) {
 			tabbedPane.setSelectedIndex(17);
+		}
+		else if (o.equals(mniDatDichVu)) {
+			tabbedPane.setSelectedIndex(18);
+		}
+		else if (o.equals(btnDangXuat)) {
+			int choice = JOptionPane.showConfirmDialog(this, "Bạn có muốn đăng xuất khỏi chương trình?", "Đăng xuất", JOptionPane.YES_NO_OPTION);
+			if (choice == JOptionPane.YES_OPTION) { // Nếu đồng ý đăng xuất thì thoát khỏi chương trình và chạy lại giao diện đăng nhập
+				this.dispose();
+				winDangNhap = new DangNhap_GUI();
+				winDangNhap.setVisible(true);
+			}
 		}
 	}
 	

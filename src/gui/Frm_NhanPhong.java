@@ -45,10 +45,10 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 	private JTextField txtTimKiemKhachHang;
 	private DefaultTableModel modelPhieuDatPhong;
 	public JTable tblPhieuDatPhong;
-	private JButton btnTimKiem, btnNhanPhong, btnQuayLai;
+	private JButton btnTimKiem, btnNhanPhong, btnHuyPhieu, btnQuayLai;
 	private Phong_DAO phongDAO;
 	private PhieuDatPhong_DAO phieuDatPhongDAO;
-	private ChiTietPhieuDatPhong_DAO ctPhieuDatPhongDAO;
+	private ChiTietPhieuDatPhong_DAO chiTietPhieuDatPhongDAO;
 	private KhachHang_DAO khachHangDAO;
 	private List<Phong> listPhong;
 	private List<PhieuDatPhong> listPhieuDatPhong;
@@ -89,7 +89,7 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 
 		phongDAO = new Phong_DAO();
 		phieuDatPhongDAO = new PhieuDatPhong_DAO();
-		ctPhieuDatPhongDAO = new ChiTietPhieuDatPhong_DAO();
+		chiTietPhieuDatPhongDAO = new ChiTietPhieuDatPhong_DAO();
 		khachHangDAO = new KhachHang_DAO();
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -154,7 +154,7 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 		btnNhanPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnNhanPhong.setFocusable(false);
 		btnNhanPhong.setBackground(new Color(217, 217, 217));
-		btnNhanPhong.setBounds(685, 691, 211, 35);
+		btnNhanPhong.setBounds(464, 691, 211, 35);
 		pnlFull.add(btnNhanPhong);
 
 		btnQuayLai = new JButton("Quay lại");
@@ -163,10 +163,18 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 		btnQuayLai.setBackground(new Color(217, 217, 217));
 		btnQuayLai.setBounds(940, 691, 211, 35);
 		pnlFull.add(btnQuayLai);
+		
+		btnHuyPhieu = new JButton("Hủy phiếu");
+		btnHuyPhieu.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		btnHuyPhieu.setFocusable(false);
+		btnHuyPhieu.setBackground(new Color(217, 217, 217));
+		btnHuyPhieu.setBounds(710, 691, 200, 35);
+		pnlFull.add(btnHuyPhieu);
 
+		// Truyền các biến danh sách được xử lý trong lớp DAO
 		listPhong = phongDAO.getAllTablePhong();
 		listPhieuDatPhong = phieuDatPhongDAO.getAllPhieuDatPhong();
-		listCTPhieuDatPhong = ctPhieuDatPhongDAO.getAllChiTietPhieuDatPhong();
+		listCTPhieuDatPhong = chiTietPhieuDatPhongDAO.getAllChiTietPhieuDatPhong();
 		listKhachHang = khachHangDAO.getAllTableKhachHang();
 
 		updateTableData_PhieuDatPhong(listPhieuDatPhong);
@@ -174,6 +182,7 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 		// Thêm sự kiện cho các nút
 		btnTimKiem.addActionListener(this);
 		btnNhanPhong.addActionListener(this);
+		btnHuyPhieu.addActionListener(this);
 		btnQuayLai.addActionListener(this);
 	}
 
@@ -181,15 +190,16 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
-		if (o.equals(btnTimKiem)) {
+		if (o.equals(btnTimKiem)) { // Tìm kiếm tên khách hàng trong danh sách phiếu đặt phòng
 			String hoTenKhachHang = txtTimKiemKhachHang.getText().trim();
-			String chuoiTim = "";	
+			String chuoiTim = "";
 			if (hoTenKhachHang.equals("")) {
 				JOptionPane.showMessageDialog(this, "Hãy nhập tên khách hàng cần tìm kiếm!");
 			} else {
-				chuoiTim += "kh.hoTenKhachHang like '%" + txtTimKiemKhachHang.getText() + "%'";
+				chuoiTim += "kh.hoTenKhachHang like N'%" + txtTimKiemKhachHang.getText() + "%'";
 				List<PhieuDatPhong> dsPhieuDatPhongByHoTenKH;
 				try {
+					// Lấy ra danh sách phiếu đặt phòng có tên khách hàng cần tìm
 					dsPhieuDatPhongByHoTenKH = phieuDatPhongDAO.getAllPhieuDatPhongByTenKhachHang(chuoiTim);
 					if (dsPhieuDatPhongByHoTenKH.size() != 0) {
 						modelPhieuDatPhong.getDataVector().removeAllElements();
@@ -205,10 +215,33 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 			}
 		} else if (o.equals(btnNhanPhong)) {
 			int row = tblPhieuDatPhong.getSelectedRow();
+			// Xét trường hợp đơn đặt phòng cần đặt chưa được chọn
 			if (row == -1) {
 				JOptionPane.showMessageDialog(this, "Hãy chọn đơn đặt phòng cần được nhận phòng!");
 			} else {
 				this.dispose();
+			}
+		} else if (o.equals(btnHuyPhieu)) {
+			// Đưa ra thông báo xác nhận cho lựa chọn hủy phiếu đặt phòng này
+			int choice = JOptionPane.showConfirmDialog(null, "Bạn có xác nhận hủy phiếu này không?", "Xác nhận!",
+					JOptionPane.YES_NO_OPTION);
+			if (choice == JOptionPane.YES_OPTION) {
+				int row = tblPhieuDatPhong.getSelectedRow();
+				String maphieudat = tblPhieuDatPhong.getValueAt(row, 1).toString();
+				String tenphong = tblPhieuDatPhong.getValueAt(row, 4).toString();
+				String maphong = "";
+				for (Phong phong : listPhong) {
+					if (phong.getTenPhong().equals(tenphong)) {
+						maphong = phong.getMaPhong();
+						break;
+					}
+				}
+				JOptionPane.showMessageDialog(this, "Đã hủy phiếu đặt phòng thành công!");
+				phongDAO.updateTrangThai(maphong, "Trống");
+				chiTietPhieuDatPhongDAO.deleteChiTietPhieuDatPhongByMaPhieuDat(maphieudat);
+				phieuDatPhongDAO.deletePhieuDatPhongByMaPhieuDat(maphieudat);
+				listPhieuDatPhong = phieuDatPhongDAO.getAllPhieuDatPhong();
+				updateTableData_PhieuDatPhong(listPhieuDatPhong);
 			}
 		} else if (o.equals(btnQuayLai)) {
 			this.dispose();
@@ -281,5 +314,4 @@ public class Frm_NhanPhong extends JFrame implements ActionListener {
 	public Timestamp getThoiGianDat() {
 		return tgdat;
 	}
-
 }

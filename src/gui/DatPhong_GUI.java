@@ -15,6 +15,7 @@ import java.awt.event.FocusListener;
 import java.util.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,7 +61,9 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 	private JTextField txtNgayDat;
 	private JComboBox cmbTrangThai, cmbGio, cmbPhut;
 	private DefaultTableModel modelPhong, modelPhongDat;
-	private JButton btnTimKiem, btnThemPhieuDatPhong, btnLuuPhieuDatPhong, btnHuyPhieu;
+	private JButton btnTimKiem, btnThemPhieuDatPhong, btnLuuPhieuDatPhong;
+	private DecimalFormat df;
+	private NhanVien nhanVien;
 	private Phong_DAO phongDAO;
 	private LoaiPhong_DAO loaiPhongDAO;
 	private PhieuDatPhong_DAO phieuDatPhongDAO;
@@ -81,15 +84,18 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 	 * 
 	 * @throws Exception
 	 */
-	public DatPhong_GUI() throws Exception {
-
+	public DatPhong_GUI(NhanVien nhanVien) throws Exception {
+		this.nhanVien = nhanVien;
 		// Kết nối với ConnectDB
 		try {
 			ConnectDB.getInstance().connect();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
+		df = new DecimalFormat("#,##0.00");
+		
+		// Khởi tạo các biến kiểu DAO
 		phongDAO = new Phong_DAO();
 		loaiPhongDAO = new LoaiPhong_DAO();
 		phieuDatPhongDAO = new PhieuDatPhong_DAO();
@@ -109,7 +115,7 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 		txtTimKiem.setBounds(61, 81, 740, 30);
 		add(txtTimKiem);
 		txtTimKiem.setColumns(10);
-		setPlaceholder(txtTimKiem, "Nhập loại phòng cần tìm");
+		setPlaceholder(txtTimKiem, "Nhập tên phòng hoặc loại phòng cần tìm");
 
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnTimKiem.setFont(new Font("SansSerif", Font.PLAIN, 20));
@@ -145,7 +151,8 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 		lblNgayDat.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		lblNgayDat.setBounds(61, 429, 153, 30);
 		add(lblNgayDat);
-
+		
+		// Tạo 1 biến thuộc kiểu JDatePickerImpl thuộc thư viện JDatePicker
 		modelDate = new SqlDateModel();
 		Properties p = new Properties();
 		p.put("text.day", "Day");
@@ -199,7 +206,8 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 		pnlPhieuDatPhong.setBounds(61, 470, 1496, 474);
 		add(pnlPhieuDatPhong);
 		pnlPhieuDatPhong.setLayout(null);
-
+		
+		// Phần phiếu đặt phòng
 		JLabel lblPhieuDatPhong = new JLabel("Phiếu đặt phòng");
 		lblPhieuDatPhong.setBounds(646, 11, 205, 34);
 		lblPhieuDatPhong.setFont(new Font("SansSerif", Font.BOLD, 26));
@@ -250,24 +258,18 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 
 		btnLuuPhieuDatPhong = new JButton("Lưu phiếu đặt phòng");
 		btnLuuPhieuDatPhong.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		btnLuuPhieuDatPhong.setBounds(949, 955, 303, 31);
+		btnLuuPhieuDatPhong.setBounds(1243, 955, 303, 31);
 		btnLuuPhieuDatPhong.setBackground(new Color(217, 217, 217));
 		btnLuuPhieuDatPhong.setFocusable(false);
 		add(btnLuuPhieuDatPhong);
-
-		btnHuyPhieu = new JButton("Hủy phiếu");
-		btnHuyPhieu.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		btnHuyPhieu.setBounds(1357, 956, 170, 30);
-		btnHuyPhieu.setBackground(new Color(217, 217, 217));
-		btnHuyPhieu.setFocusable(false);
-		add(btnHuyPhieu);
 
 		cmbTrangThai = new JComboBox();
 		cmbTrangThai.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		cmbTrangThai.setModel(new DefaultComboBoxModel(new String[] { "", "Trống", "Đặt trước", "Đang sử dụng" }));
 		cmbTrangThai.setBounds(1357, 81, 170, 30);
 		add(cmbTrangThai);
-
+		
+		// Gán các giá trị List cho các hàm xử lý bên class DAO
 		listPhong = phongDAO.getAllTablePhong();
 		listLoaiPhong = loaiPhongDAO.getAllTableLoaiPhong();
 		listPhieuDatPhong = phieuDatPhongDAO.getAllPhieuDatPhong();
@@ -281,7 +283,6 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 		btnTimKiem.addActionListener(this);
 		btnLuuPhieuDatPhong.addActionListener(this);
 		btnThemPhieuDatPhong.addActionListener(this);
-		btnHuyPhieu.addActionListener(this);
 		cmbTrangThai.addActionListener(this);
 
 	}
@@ -320,36 +321,20 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
-		if (o.equals(btnTimKiem)) {
+		if (o.equals(btnTimKiem)) { // Tìm kiếm tên phòng hoặc loại phòng
 			String chuoiTim = "";
+			// Xét trường hợp txtTimKiem khác rỗng
 			if (!txtTimKiem.getText().trim().equals("")) {
-//				chuoiTim += "tenPhong like '%" + txtTimKiem.getText() + "%'";
-//				try {
-//					ArrayList<Phong> dsPhongByTenPhong = phongDAO.getAllTablePhongByTenPhongOrTenLoaiPhong(chuoiTim);
-//					if (dsPhongByTenPhong.size() != 0) {
-//						modelPhong.getDataVector().removeAllElements();
-//						updateTableData_Phong();
-//					} else {
-//						chuoiTim += "lp.tenLoaiPhong like '%" + txtTimKiem.getText() + "%'";		
-//						ArrayList<Phong> dsPhongByLoaiPhong = phongDAO.getAllTablePhongByTenPhongOrTenLoaiPhong(chuoiTim);
-//						if (dsPhongByLoaiPhong.size() != 0) {
-//							modelPhong.getDataVector().removeAllElements();
-//							updateTableData_Phong();
-//						}
-//					}
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-				chuoiTim += "lp.tenLoaiPhong like '%" + txtTimKiem.getText() + "%'";
-				List<Phong> dsPhongByLoaiPhong;
+				chuoiTim += "tenPhong like N'%" + txtTimKiem.getText() + "%' or lp.tenLoaiPhong like N'%" + txtTimKiem.getText() + "%'";
+				List<Phong> dsPhongByTenHoacLoaiPhong;
 				try {
-					dsPhongByLoaiPhong = phongDAO.getAllTablePhongByTenPhongOrTenLoaiPhong(chuoiTim);
-					if (dsPhongByLoaiPhong.size() != 0) {
+					// Lấy danh sách tên phòng hoặc loại phòng đang tìm
+					dsPhongByTenHoacLoaiPhong = phongDAO.getAllTablePhongByTenPhongOrTenLoaiPhong(chuoiTim);
+					if (dsPhongByTenHoacLoaiPhong.size() != 0) {
 						modelPhong.getDataVector().removeAllElements();
-						updateTableData_Phong(dsPhongByLoaiPhong);
+						updateTableData_Phong(dsPhongByTenHoacLoaiPhong);
 					} else {
-						JOptionPane.showMessageDialog(this, "Không tìm thấy loại phòng");
+						JOptionPane.showMessageDialog(this, "Không tìm thấy tên phòng hoặc loại phòng!");
 					}
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -357,11 +342,11 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 				}
 
 			}
-		} else if (o.equals(btnLuuPhieuDatPhong)) {
+		} else if (o.equals(btnLuuPhieuDatPhong)) { // Lưu phiếu đặt phòng
 			int rowCount = tblPhongDat.getRowCount();
 			String tenkh = lblHienThiTenKhachHang.getText();
 			String makh = "";
-			String manv = "NV001";
+			String manv = nhanVien.getMaNhanVien();
 			String tt = "Chờ nhận phòng";
 			Timestamp time = null;
 			for (KhachHang kh : listKhachHang) {
@@ -400,15 +385,17 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 				}
 			}
 
-		} else if (o.equals(btnThemPhieuDatPhong)) {
+		} else if (o.equals(btnThemPhieuDatPhong)) { // Thêm phiếu đặt phòng vào thông tin đặt phòng
+			// Xét trường hợp nếu khách hàng chưa được chọn
 			if (lblHienThiTenKhachHang.getText().equals("")) {
 				JOptionPane.showMessageDialog(this, "Bạn chưa chọn khách hàng cần thêm vào hóa đơn!");
 			} else {
 				int row = tblChonPhong.getSelectedRow();
 				String trangthai = tblChonPhong.getValueAt(row, 4).toString();
+				// Xét trường hợp phòng chưa được chọn
 				if (row == -1) {
 					JOptionPane.showMessageDialog(this, "Bạn chưa chọn phòng!");
-				} else if (datePicker.equals(null)) {
+				} else if (datePicker.equals(null)) { // Xét trường hợp ngày đặt chưa được chọn
 					JOptionPane.showMessageDialog(this, "Bạn chưa chọn ngày đặt!");
 				} else {
 					try {
@@ -473,18 +460,7 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 					}
 				}
 			}
-		} else if (o.equals(btnHuyPhieu)) {
-			int choice = JOptionPane.showConfirmDialog(null, "Bạn có xác nhận hủy phiếu này không?", "Xác nhận!",
-					JOptionPane.YES_NO_OPTION);
-			if (choice == JOptionPane.YES_OPTION) {
-				int row = tblPhongDat.getRowCount();
-				String maphong = tblPhongDat.getValueAt(row, 0).toString();
-				modelPhongDat.getDataVector().removeAllElements();
-				JOptionPane.showMessageDialog(this, "Đã hủy phiếu đặt phòng thành công!");
-				phongDAO.updateTrangThai(maphong, "Trống");
-//				phieuDatPhongDAO.updateTrangThai(maphong, maphong)
-			}
-		} else if (o.equals(cmbTrangThai)) { // Lọc các trạng thái của phòng
+		}  else if (o.equals(cmbTrangThai)) { // Lọc các trạng thái của phòng
 			String ttTim = cmbTrangThai.getSelectedItem().toString();
 			if (!ttTim.equals("")) {
 				modelPhong.getDataVector().removeAllElements();
@@ -542,7 +518,7 @@ public class DatPhong_GUI extends JPanel implements ActionListener, MouseListene
 					break;
 				}
 			}
-			modelPhong.addRow(new Object[] { p.getMaPhong(), p.getTenPhong(), tenlp, p.getDonGia(), p.getTrangThai() });
+			modelPhong.addRow(new Object[] { p.getMaPhong(), p.getTenPhong(), tenlp, df.format(p.getDonGia()), p.getTrangThai() });
 		}
 	}
 

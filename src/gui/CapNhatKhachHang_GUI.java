@@ -11,8 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -49,7 +47,6 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 		try {
 			ConnectDB.getInstance().connect();
 		} catch (SQLException e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 
@@ -72,31 +69,31 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 
 		// Thêm Label Họ tên khách hàng
 		lblHoTenKhachHang = new JLabel("Họ tên khách hàng");
-		lblHoTenKhachHang.setBounds(55, 170, 200, 30);
+		lblHoTenKhachHang.setBounds(900, 100, 200, 30);
 		lblHoTenKhachHang.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblHoTenKhachHang);
 		add(lblHoTenKhachHang);
 
+		// Thêm Label Giới tính
+		lblGioiTinh = new JLabel("Giới tính");
+		lblGioiTinh.setBounds(55, 170, 200, 30);
+		lblGioiTinh.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+//		pnlCapNhatKhachHang.add(lblGioiTinh);
+		add(lblGioiTinh);
+
 		// Thêm Label Số điện thoại
 		lblSoDienThoai = new JLabel("Số điện thoại");
-		lblSoDienThoai.setBounds(882, 100, 150, 30);
+		lblSoDienThoai.setBounds(900, 170, 150, 30);
 		lblSoDienThoai.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblSoDienThoai);
 		add(lblSoDienThoai);
 
 		// Thêm Label Căn cước công dân
-		lblCCCD = new JLabel("CCCD");
-		lblCCCD.setBounds(882, 170, 150, 30);
+		lblCCCD = new JLabel("Căn cước công dân");
+		lblCCCD.setBounds(55, 242, 200, 30);
 		lblCCCD.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 //		pnlCapNhatKhachHang.add(lblCCCD);
 		add(lblCCCD);
-
-		// Thêm Label Giới tính
-		lblGioiTinh = new JLabel("Giới tính");
-		lblGioiTinh.setBounds(55, 242, 150, 30);
-		lblGioiTinh.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
-//		pnlCapNhatKhachHang.add(lblGioiTinh);
-		add(lblGioiTinh);
 
 		// Thêm TextField Mã khách hàng
 		txtMaKhachHang = new JTextField();
@@ -108,33 +105,33 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 
 		// Thêm TextField Họ tên khách hàng
 		txtHoTenKhachHang = new JTextField();
-		txtHoTenKhachHang.setBounds(265, 170, 300, 30);
+		txtHoTenKhachHang.setBounds(1100, 102, 300, 30);
 		txtHoTenKhachHang.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 //		pnlCapNhatKhachHang.add(txtHoTenKhachHang);
 		add(txtHoTenKhachHang);
 
+		// Thêm combobox Giới tính
+		cmbGioiTinh = new JComboBox<String>();
+		cmbGioiTinh.setBounds(265, 170, 300, 30);
+		cmbGioiTinh.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+		cmbGioiTinh.setEditable(false);
+		cmbGioiTinh.setFocusable(false);
+//		pnlCapNhatKhachHang.add(cmbGioiTinh);
+		add(cmbGioiTinh);
+
 		// Thêm TextField Số điện thoại
 		txtSoDienThoai = new JTextField();
-		txtSoDienThoai.setBounds(1062, 102, 300, 30);
+		txtSoDienThoai.setBounds(1100, 172, 300, 30);
 		txtSoDienThoai.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 //		pnlCapNhatKhachHang.add(txtSoDienThoai);
 		add(txtSoDienThoai);
 
 		// Thêm TextField Cân cước công dân
 		txtCCCD = new JTextField();
-		txtCCCD.setBounds(1062, 172, 300, 30);
+		txtCCCD.setBounds(265, 242, 300, 30);
 		txtCCCD.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 //		pnlCapNhatKhachHang.add(txtCCCD);
 		add(txtCCCD);
-
-		// Thêm combobox Giới tính
-		cmbGioiTinh = new JComboBox<String>();
-		cmbGioiTinh.setBounds(265, 242, 300, 30);
-		cmbGioiTinh.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
-		cmbGioiTinh.setEditable(false);
-		cmbGioiTinh.setFocusable(false);
-//		pnlCapNhatKhachHang.add(cmbGioiTinh);
-		add(cmbGioiTinh);
 
 		// Add item cho Combobox
 		cmbGioiTinh.addItem("Nam");
@@ -184,7 +181,7 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 		tblKhachHang.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblKhachHang.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
 		tblKhachHang.setRowHeight(50);
-		
+		tblKhachHang.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 25));
 
 		// Set Size Width ColumnTable
 //		tblKhachHang.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -217,55 +214,50 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnThem)) {
-			if(txtMaKhachHang.getText().trim().length() < 0) {
+			if (txtMaKhachHang.getText().trim().length() < 0) {
 				try {
 					txtMaKhachHang.setText(generatesIncrementalCode());
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}else {	
-			
-			if (validData()) {
-				try {
-					txtMaKhachHang.setText(generatesIncrementalCode());
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				String maKhachHang = txtMaKhachHang.getText().trim();
-				String hoTenKhachHang = txtHoTenKhachHang.getText().trim();
-				String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
-				String soDienThoai = txtSoDienThoai.getText().trim();
-				String canCuocCongDan = txtCCCD.getText().trim();
-				try {
-					KhachHang khachHang = new KhachHang(maKhachHang, hoTenKhachHang, gioiTinh, soDienThoai,
-							canCuocCongDan);
+			} else {
+
+				if (validData()) {
 					try {
-						if (khachHang_DAO.insert(khachHang)) {
-							modelKhachHang.addRow(new Object[] { khachHang.getMaKhachHang(),
-									khachHang.getHoTenKhachHang(), khachHang.isGioiTinh(), khachHang.getSoDienThoai(),
-									khachHang.getCanCuocCongDan() });
-							JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công");
-							// Thông báo cho biết rằng tất cả giá trị ô trong các hàng của bảng có thể đã
-							// thay đổi.
-							modelKhachHang.fireTableDataChanged();
-							loadDanhSachKhachHang();
-						} else {
-							JOptionPane.showMessageDialog(this, "Mã khách hàng đã có (Trùng mã)");
-						}
-					} catch (SQLException e2) {
-						// TODO: handle exception
-						JOptionPane.showMessageDialog(this, "Thêm khách hàng không thành công");
+						txtMaKhachHang.setText(generatesIncrementalCode());
+					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
-				} catch (Exception e2) {
-					// TODO: handle exception
-					e2.printStackTrace();
+					String maKhachHang = txtMaKhachHang.getText().trim();
+					String hoTenKhachHang = txtHoTenKhachHang.getText().trim();
+					String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
+					String soDienThoai = txtSoDienThoai.getText().trim();
+					String canCuocCongDan = txtCCCD.getText().trim();
+					try {
+						KhachHang khachHang = new KhachHang(maKhachHang, hoTenKhachHang, gioiTinh, soDienThoai,
+								canCuocCongDan);
+						try {
+							if (khachHang_DAO.insert(khachHang)) {
+								modelKhachHang.addRow(new Object[] { khachHang.getMaKhachHang(),
+										khachHang.getHoTenKhachHang(), khachHang.isGioiTinh(),
+										khachHang.getSoDienThoai(), khachHang.getCanCuocCongDan() });
+								JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công");
+								// Thông báo cho biết rằng tất cả giá trị ô trong các hàng của bảng có thể đã
+								// thay đổi.
+								modelKhachHang.fireTableDataChanged();
+								loadDanhSachKhachHang();
+							} else {
+								JOptionPane.showMessageDialog(this, "Mã khách hàng đã có (Trùng mã)");
+							}
+						} catch (SQLException e2) {
+							JOptionPane.showMessageDialog(this, "Thêm khách hàng không thành công");
+						}
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
 				}
-			}
 			}
 		} else if (o.equals(btnSua)) {
 			String maKhachHang = txtMaKhachHang.getText().trim();
@@ -274,32 +266,33 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 			String soDienThoai = txtSoDienThoai.getText().trim();
 			String canCuocCongDan = txtCCCD.getText().trim();
 			int row = tblKhachHang.getSelectedRow();
-			if(row >= 0) {
-				try {
-					KhachHang khachHang = new KhachHang(maKhachHang, hoTenKhachHang, gioiTinh, soDienThoai, canCuocCongDan);
+			if (row >= 0) {
+				if (validDataUpdate()) {
 					try {
-						boolean capNhat = khachHang_DAO.update(khachHang);
-						if(capNhat) {
-							modelKhachHang.setValueAt(khachHang.getMaKhachHang(), row, 0);
-							modelKhachHang.setValueAt(khachHang.getHoTenKhachHang(), row, 1);
-							modelKhachHang.setValueAt(khachHang.isGioiTinh(), row, 2);
-							modelKhachHang.setValueAt(khachHang.getSoDienThoai(), row, 3);
-							modelKhachHang.setValueAt(khachHang.getCanCuocCongDan(), row, 4);
-							JOptionPane.showMessageDialog(this, "Cập nhật khách hàng thành công");
-							modelKhachHang.fireTableDataChanged();
-							loadDanhSachKhachHang();
-						}else {
-							JOptionPane.showMessageDialog(this, "Cập nhật khách hàng không thành công");
+						KhachHang khachHang = new KhachHang(maKhachHang, hoTenKhachHang, gioiTinh, soDienThoai,
+								canCuocCongDan);
+						try {
+							boolean capNhat = khachHang_DAO.update(khachHang);
+							if (capNhat) {
+								modelKhachHang.setValueAt(khachHang.getMaKhachHang(), row, 0);
+								modelKhachHang.setValueAt(khachHang.getHoTenKhachHang(), row, 1);
+								modelKhachHang.setValueAt(khachHang.isGioiTinh(), row, 2);
+								modelKhachHang.setValueAt(khachHang.getSoDienThoai(), row, 3);
+								modelKhachHang.setValueAt(khachHang.getCanCuocCongDan(), row, 4);
+								JOptionPane.showMessageDialog(this, "Cập nhật khách hàng thành công");
+								modelKhachHang.fireTableDataChanged();
+								loadDanhSachKhachHang();
+							} else {
+								JOptionPane.showMessageDialog(this, "Cập nhật khách hàng không thành công");
+							}
+						} catch (Exception e2) {
+							e2.printStackTrace();
 						}
-					} catch (Exception e2) {
-						// TODO: handle exception
-						e2.printStackTrace();
+					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
-			}else {
+			} else {
 				JOptionPane.showMessageDialog(this, "Chọn dòng muốn sửa");
 			}
 		} else if (o.equals(btnLamMoi)) {
@@ -339,7 +332,6 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(tblKhachHang)) {
 			/*
@@ -376,25 +368,21 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 	public void refeshTextField() {
@@ -409,7 +397,7 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 	public boolean validData() {
 		String maKhachHang = txtMaKhachHang.getText().trim();
 		String hoTenKhachHang = txtHoTenKhachHang.getText().trim();
-		String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
+//		String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
 		String soDienThoai = txtSoDienThoai.getText().trim();
 		String canCuocCongDan = txtCCCD.getText().trim();
 
@@ -422,7 +410,7 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 //					"Error: Mã khách hàng không hợp lệ. Nhập lại mã khách hàng theo VD: KH00001");
 //			return false;
 //		} else {
-		if(maKhachHang.matches("(KH)\\d{5}")) {
+		if (maKhachHang.matches("(KH)\\d{5}")) {
 			for (KhachHang khachHang : arlKhachHang) {
 				if (khachHang.getMaKhachHang().equalsIgnoreCase(maKhachHang)) {
 					JOptionPane.showMessageDialog(this, "Error: Mã khách hàng đã tồn tại (Trùng mã khách hàng)");
@@ -434,35 +422,86 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 		if (!((hoTenKhachHang).length() > 0)) {
 			JOptionPane.showMessageDialog(this, "Error: Tên khách hàng không được để trống");
 			return false;
+		} else if (!hoTenKhachHang.matches(
+				"^([A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỉĨỊÓÒỎÕỌÚÙỦŨỤĂẮẰẲẴẶÂẤẦẨẪẬĐĨỈỊƠỞỜỞỠỢƯỨỪỬỮỰ][a-zđáàảãạéèẻẽẹêềếểễệíìỉĩịóòỏõọúùủũụăắằẳẵặâấầẩẫậđĩỉịơởờởỡợưứừửữự]*(\\s|$))+")) {
+			/***
+			 * Chữ cái đầu mỗi chữ phái viết hoa
+			 * Tên không có chữ số
+			 * Tên không được có ký tự đặc biệt
+			 */
+			
+			JOptionPane.showMessageDialog(this,
+					"Error: Tên khách hàng không hợp lệ. \n Yêu cầu họ tên: \n Chữ cái đầu mỗi chữ phái viết hoa \n Tên không được có ký tự đặc biệt \n Tên không có chữ số");
+			return false;
 		}
-//			else if () {
-//			JOptionPane.showMessageDialog(this,
-//					"Error: Tên khách hàng không lệ. Nhập lại họ tên khách hàng theo VD: Trần Anh Tiến, Alex Đặng, Gon");
-//			return false;
-//		}
 
 		if (!(soDienThoai.length() > 0)) {
 			JOptionPane.showMessageDialog(this, "Error: Số điện thoại không được để rỗng");
 			return false;
-		} else if (!soDienThoai.matches("")) {
-
+		} else if (!soDienThoai.matches("(09|08|03|07|05|02)\\d{8}")) {
+			JOptionPane.showMessageDialog(this,
+					"Số điện thoại không hợp lệ (Số điện thoại bắt đầu bằng (09, 08, 03, 07, 05, 02)) và số điện thoại có 10 số");
+			return false;
 		}
 		if (!(canCuocCongDan.length() > 0)) {
 			JOptionPane.showMessageDialog(this, "Error: Căn cước không được để rỗng");
 			return false;
+		} else if (!canCuocCongDan.matches("(0)\\d{11}")) {
+			JOptionPane.showMessageDialog(this,
+					"Căn cước không hợp lệ. Căn cước bắt đầu bằng số 0 (Căn cước có đúng 12 số)");
+			return false;
+		} else {
+			for (KhachHang khachHang : arlKhachHang) {
+				if (khachHang.getCanCuocCongDan().equalsIgnoreCase(canCuocCongDan)) {
+					JOptionPane.showMessageDialog(this, "Error: Căn cước đã tồn tại (Trùng căn cước công dân)");
+					return false;
+				}
+			}
 		}
 		return true;
 	}
 
+	public boolean validDataUpdate() {
+		String maKhachHang = txtMaKhachHang.getText().trim();
+		String hoTenKhachHang = txtHoTenKhachHang.getText().trim();
+//		String gioiTinh = cmbGioiTinh.getSelectedItem().toString();
+		String soDienThoai = txtSoDienThoai.getText().trim();
+		String canCuocCongDan = txtCCCD.getText().trim();
+		
+		if (!hoTenKhachHang.matches(
+				"^([A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỉĨỊÓÒỎÕỌÚÙỦŨỤĂẮẰẲẴẶÂẤẦẨẪẬĐĨỈỊƠỞỜỞỠỢƯỨỪỬỮỰ][a-zđáàảãạéèẻẽẹêềếểễệíìỉĩịóòỏõọúùủũụăắằẳẵặâấầẩẫậđĩỉịơởờởỡợưứừửữự]*(\\s|$))+")) {
+			/***
+			 * Chữ cái đầu mỗi chữ phái viết hoa
+			 * Tên không có chữ số
+			 * Tên không được có ký tự đặc biệt
+			 */
+			
+			JOptionPane.showMessageDialog(this,
+					"Error: Tên khách hàng không lệ. \n Yêu cầu họ tên: \n Chữ cái đầu mỗi chữ phái viết hoa \n Tên không được có ký tự đặc biệt \n Tên không có chữ số");
+			return false;
+		}
+		
+		if (!soDienThoai.matches("(09|08|03|07|05|02)\\d{8}")) {
+			JOptionPane.showMessageDialog(this,
+					"Số điện thoại không hợp lệ (Số điện thoại bắt đầu bằng (09, 08, 03, 07, 05, 02)) và số điện thoại có 10 số");
+			return false;
+		}
+		
+		if (!canCuocCongDan.matches("(0)\\d{11}")) {
+			JOptionPane.showMessageDialog(this,
+					"Căn cước không hợp lệ. Căn cước bắt đầu bằng số 0 (Căn cước có đúng 12 số)");
+			return false;
+		} 
+		return true;
+	}
+	
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		Object key = e.getKeyCode();
 		// Bắt sự kiện nhấn phím enter nhấn btnThem
@@ -475,7 +514,6 @@ public class CapNhatKhachHang_GUI extends JPanel implements ActionListener, Mous
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 

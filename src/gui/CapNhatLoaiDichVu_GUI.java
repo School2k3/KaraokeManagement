@@ -121,13 +121,13 @@ public class CapNhatLoaiDichVu_GUI extends JPanel implements ActionListener, Mou
 
 		add(scrLoaiDichVu = new JScrollPane(tblLoaiDichVu = new JTable(model), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
-		tblLoaiDichVu.setFont(new Font("SansSerif", Font.PLAIN, 17));
+		tblLoaiDichVu.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		scrLoaiDichVu.setBounds(175, 337, 1291, 674);
 		scrLoaiDichVu.setBackground(new Color(120, 255, 239));
 		scrLoaiDichVu.getViewport().setBackground(Color.WHITE);
 		scrLoaiDichVu.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblLoaiDichVu.getTableHeader().setBackground(new Color(120, 255, 239));
-		tblLoaiDichVu.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+		tblLoaiDichVu.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 23));
 		tblLoaiDichVu.setRowHeight(50);
 		loadDanhSachLoaiDichVu();
 		docDuLieuVaoTable();

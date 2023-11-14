@@ -52,26 +52,26 @@ public class Phong_DAO {
 	/*
 	 * Lấy phòng theo mã phòng từ database
 	 */
-	public List<Phong> getAllPhongByMaHoaDon(String maTim) {
-		List<Phong> dsPhong = new ArrayList<Phong>();
+	public Phong getPhongByMaPhong(String maTim) {
+		Phong phong = null;
 		ConnectDB.getInstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
 		try {
-			String sql = "Select * from HoaDon where maHoaDon = ?";
+			String sql = "Select maPhong, tenPhong, lp.maLoaiPhong, lp.tenLoaiPhong, donGia, trangThai from Phong p join LoaiPhong lp on p.maLoaiPhong= lp.maLoaiPhong where maPhong = ?";
 			preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setString(1, maTim);
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				String maPhong = rs.getString(1);
 				String tenPhong = rs.getString(2);
-				String trangThai = rs.getString(3);
-				LoaiPhong maLoaiPhong = new LoaiPhong(rs.getString(4));
-				double donGia = rs.getDouble(5);
-				
-				Phong phong = new Phong(maPhong, tenPhong, trangThai, maLoaiPhong, donGia);
-				dsPhong.add(phong);
+				String maLoaiPhong= rs.getString(3);
+				String tenLoaiPhong= rs.getString(4);
+				double donGia= rs.getDouble(5);
+				String trangThai= rs.getString(6);
+				LoaiPhong lp = new LoaiPhong(maLoaiPhong, tenLoaiPhong);
+				phong = new Phong(maPhong, tenPhong, trangThai, lp, donGia);
 			}
 			preparedStatement.close();
 			rs.close();
@@ -79,7 +79,7 @@ public class Phong_DAO {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return dsPhong;
+		return phong;
 	}
 	
 	public ArrayList<Phong> getAllTablePhongByTenPhongOrTenLoaiPhong(String chuoiTim) throws Exception {

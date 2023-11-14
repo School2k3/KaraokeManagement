@@ -222,23 +222,31 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 		scrPhongDat.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblChiTietDichVu.getTableHeader().setBackground(new Color(120, 255, 239));
 		tblChiTietDichVu.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+		tblChiTietDichVu.setFont(new Font("SansSerif", Font.PLAIN, 16));
+		tblChiTietDichVu.setRowHeight(40);
 		pnlTableChiTietDichVu.add(scrPhongDat);
 
 		// Thêm các nút cho giao diện
 		btnThanhToan = new JButton("Thanh toán");
 		btnThanhToan.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnThanhToan.setBounds(131, 916, 231, 34);
+		btnThanhToan.setBackground(new Color(217, 217, 217));
+		btnThanhToan.setFocusable(false);
 		pnlFull.add(btnThanhToan);
 
 		btnInHoaDon = new JButton("In hóa đơn");
-//		btnInHoaDon.setEnabled(false);
+		btnInHoaDon.setEnabled(false);
 		btnInHoaDon.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnInHoaDon.setBounds(492, 916, 231, 34);
+		btnInHoaDon.setBackground(new Color(217, 217, 217));
+		btnInHoaDon.setFocusable(false);
 		pnlFull.add(btnInHoaDon);
 
 		btnQuayLai = new JButton("Quay lại");
 		btnQuayLai.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		btnQuayLai.setBounds(853, 916, 200, 34);
+		btnQuayLai.setBackground(new Color(217, 217, 217));
+		btnQuayLai.setFocusable(false);
 		pnlFull.add(btnQuayLai);
 
 		// Thêm các thông tin tính tiền hóa đơn cho giao diện
@@ -331,6 +339,7 @@ public class Frm_HoaDon extends JFrame implements ActionListener {
 				if (file.exists()) {
 					Process process = Runtime.getRuntime().exec("rundll32 url.dll, FileProtocolHandler " + path);
 					process.waitFor();
+					JOptionPane.showMessageDialog(this, "Đã xuất hóa đơn thành công!");
 				} else
 					JOptionPane.showMessageDialog(this, "File không tồn tại!");
 

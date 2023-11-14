@@ -103,11 +103,11 @@ public class HoaDon {
 				+ trangThai + "]";
 	}
 	
-    public double tinhTienPhong(double hour) {
+    public double tinhTienPhong(double hour, double dongia) {
         if (hour < 1.0) {
         	hour = 1.0;
         }
 
-        return hour * this.getPhong().getDonGia();
+        return hour * dongia;
     }
 }

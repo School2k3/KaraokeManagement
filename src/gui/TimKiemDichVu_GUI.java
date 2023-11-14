@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JTable;
@@ -99,13 +100,14 @@ public class TimKiemDichVu_GUI extends JPanel implements ActionListener, MouseLi
 		txtGiaDichVu.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		lblDonGia.setLabelFor(txtGiaDichVu);
 		txtGiaDichVu.setColumns(10);
-		txtGiaDichVu.setBounds(893, 145, 242, 32);
+		txtGiaDichVu.setBounds(893, 145, 220, 32);
 		add(txtGiaDichVu);
 
 		cmbLoaiDichVu = new JComboBox<String>();
 		lblLoaiDichVu.setLabelFor(cmbLoaiDichVu);
 		cmbLoaiDichVu.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		cmbLoaiDichVu.setBounds(921, 237, 214, 32);
+		cmbLoaiDichVu.setBounds(921, 233, 192, 40);
+		cmbLoaiDichVu.setFocusable(false);
 		add(cmbLoaiDichVu);
 
 		btnTimKiem = new JButton("Tìm kiếm");
@@ -153,6 +155,7 @@ public class TimKiemDichVu_GUI extends JPanel implements ActionListener, MouseLi
 
 	public void addGiaTriCmbLoai() throws Exception {
 		dsLDV = ldv_dao.getCmbLoaiDichVu();
+		cmbLoaiDichVu.removeAllItems();
 		cmbLoaiDichVu.addItem("");
 		for (LoaiDichVu loaiDichVu : dsLDV) {
 			cmbLoaiDichVu.addItem(loaiDichVu.getTenLoaiDichVu());
@@ -169,16 +172,22 @@ public class TimKiemDichVu_GUI extends JPanel implements ActionListener, MouseLi
 	private void docLieuLenTable() throws Exception {
 		model.setRowCount(0);
 		for (DichVu dv : dsDichVu) {
+			double donGiaTMP = dv.getDonGia();
+			DecimalFormat decimalFormat = new DecimalFormat("#,###.## VND");
+			String donGiaString = decimalFormat.format(donGiaTMP);
 			model.addRow(new Object[] { dv.getMaDichVu(), dv.getTenDichVu(), dv.getLoaiDichVu().getTenLoaiDichVu(),
-					dv.getSoLuongTon(), dv.getDonGia() });
+					dv.getSoLuongTon(), donGiaString });
 		}
 	}
 
-	private void xoaTrang() {
+	private void xoaTrang() throws Exception {
 		txtMaDichVu.setText("");
 		txtTenDichVu.setText("");
 		;
 		txtGiaDichVu.setText("");
+		loadDanhSachDichVu();
+		docLieuLenTable();
+		addGiaTriCmbLoai();
 		cmbLoaiDichVu.setSelectedIndex(0);
 	}
 
@@ -250,12 +259,8 @@ public class TimKiemDichVu_GUI extends JPanel implements ActionListener, MouseLi
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o.equals(btnTaiLai)) {
-			xoaTrang();
 			try {
-				cmbLoaiDichVu.removeAllItems();
-				addGiaTriCmbLoai();
-				loadDanhSachDichVu();
-				docLieuLenTable();
+				xoaTrang();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -278,6 +283,21 @@ public class TimKiemDichVu_GUI extends JPanel implements ActionListener, MouseLi
 		}
 	}
 
+	// Chuyển từ #,###.## VND thành chuỗi kí tự số thực
+	private String doiFormatThanhStringSoThuc(String giaTxt) {
+		try {
+			// Loại bỏ các ký tự không phải số từ chuỗi gia
+			String giaWithoutCurrency = giaTxt.replaceAll("[^0-9.]+", "");
+
+			// Chuyển chuỗi thành số thực
+			return giaWithoutCurrency;
+		} catch (NumberFormatException e) {
+			// Xử lý nếu có lỗi chuyển đổi
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Object o = e.getSource();
@@ -286,7 +306,8 @@ public class TimKiemDichVu_GUI extends JPanel implements ActionListener, MouseLi
 			txtMaDichVu.setText(model.getValueAt(row, 0).toString());
 			txtTenDichVu.setText(model.getValueAt(row, 1).toString());
 			cmbLoaiDichVu.setSelectedItem(model.getValueAt(row, 2));
-			txtGiaDichVu.setText(model.getValueAt(row, 4).toString());
+			String giaTmp = doiFormatThanhStringSoThuc(model.getValueAt(row, 4).toString());
+			txtGiaDichVu.setText(giaTmp);
 		}
 	}
 

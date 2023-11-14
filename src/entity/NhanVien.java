@@ -1,5 +1,7 @@
 package entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class NhanVien {
@@ -27,6 +29,19 @@ public class NhanVien {
 		setMaNhanVien(maNhanVien);
 		setSoDienThoai(soDienThoai);
 	}
+	
+	public NhanVien(String maNhanVien, String hoTenNhanVien, String gioiTinh, int namSinh, String diaChi,
+			String soDienThoai, String canCuocCongDan, String chucVu) throws Exception {
+		super();
+		setMaNhanVien(maNhanVien);
+		setHoTenNhanVien(hoTenNhanVien);
+		setGioiTinh(gioiTinh);
+		setNamSinh(namSinh);
+		setDiaChi(diaChi);
+		setSoDienThoai(soDienThoai);
+		setCanCuocCongDan(canCuocCongDan);
+		setChucVu(chucVu);
+	}
 
 	public NhanVien(String maNhanVien, String hoTenNhanVien, String gioiTinh, int namSinh, String diaChi,
 			String soDienThoai, String canCuocCongDan, String matKhau, String chucVu) throws Exception {
@@ -41,7 +56,11 @@ public class NhanVien {
 		setMatKhau(matKhau);
 		setChucVu(chucVu);
 	}
-
+	public NhanVien(ResultSet rs) throws SQLException, Exception {
+		this(rs.getString("maNhanVien"), rs.getString("hoTenNhanVien"), rs.getString("gioiTinh"), rs.getInt("namSinh"),
+				rs.getString("diaChi"), rs.getString("soDienThoai"), rs.getString("canCuocCongDan"),
+				rs.getString("chucVu"));
+	}
 	public String getMaNhanVien() {
 		return maNhanVien;
 	}

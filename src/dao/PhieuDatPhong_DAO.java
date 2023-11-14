@@ -112,6 +112,30 @@ public class PhieuDatPhong_DAO {
 	}
 	
 	/*
+	 * Xóa phiếu đặt phòng ra khỏi database khi bấm hủy phiếu
+	 */
+	public boolean deletePhieuDatPhongByMaPhieuDat(String maPhieuDat){
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement preparedStatement = null;
+        int n = 0;
+        try {
+            String sql = "delete from PhieuDatPhong where maPhieuDat = ?";
+            preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, maPhieuDat);
+            n = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+        } finally {
+            try {
+            	preparedStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
+	
+	/*
 	 * Tạo hàm phát sinh mã phiếu đặt phòng tăng dần
 	 */
 	public String phatSinhMaPhieuDat() {

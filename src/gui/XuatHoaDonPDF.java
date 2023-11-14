@@ -116,8 +116,8 @@ public class XuatHoaDonPDF {
 			PdfPCell c0 = new PdfPCell(new Paragraph("STT", f1));
 			PdfPCell c1 = new PdfPCell(new Paragraph("Mã dịch vụ", f1));
 			PdfPCell c2 = new PdfPCell(new Paragraph("Tên dịch vụ", f1));
-			PdfPCell c3 = new PdfPCell(new Paragraph("Đơn giá (VNĐ)", f1));
-			PdfPCell c4 = new PdfPCell(new Paragraph("Số lượng", f1));
+			PdfPCell c3 = new PdfPCell(new Paragraph("Số lượng", f1));
+			PdfPCell c4 = new PdfPCell(new Paragraph("Đơn giá (VNĐ)", f1));
 			PdfPCell c5 = new PdfPCell(new Paragraph("Thành tiền (VNĐ)", f1));
 
 			c0.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);

@@ -109,6 +109,30 @@ public class ChiTietPhieuDatPhong_DAO {
 	}
 	
 	/*
+	 * Xóa chí tiết phiếu đặt phòng ra khỏi database khi bấm hủy phiếu
+	 */
+	public boolean deleteChiTietPhieuDatPhongByMaPhieuDat(String maPhieuDat){
+        ConnectDB.getInstance();
+        Connection con = ConnectDB.getConnection();
+        PreparedStatement preparedStatement = null;
+        int n = 0;
+        try {
+            String sql = "delete from ChiTietPhieuDatPhong where maPhieuDat = ?";
+            preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, maPhieuDat);
+            n = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+        }finally {
+            try {
+            	preparedStatement.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return n > 0;
+    }
+	
+	/*
 	 * Lấy mã phiếu đặt phòng gần nhất
 	 */
 	public String getMaPhieuDatCuoi() {

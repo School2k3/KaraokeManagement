@@ -34,10 +34,13 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -61,6 +64,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 	private JComboBox cmbTrangThai, cmbLoaiDichVu;
 	private Frm_NhanPhong winNhanPhong;
 	private JTabbedPane tabbedPane;
+	private DecimalFormat df;
 	private NhanVien nhanVien;
 	private Phong_DAO phongDAO;
 	private LoaiPhong_DAO loaiPhongDAO;
@@ -94,7 +98,10 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
+		df = new DecimalFormat("#,##0.00");
+		
+		// Khởi tạo các biến DAO
 		phongDAO = new Phong_DAO();
 		loaiPhongDAO = new LoaiPhong_DAO();
 		dichVuDAO = new DichVu_DAO();
@@ -117,6 +124,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		txtTimKiem.setBounds(61, 81, 600, 30);
 		add(txtTimKiem);
 		txtTimKiem.setColumns(10);
+		setPlaceholder(txtTimKiem, "Nhập tên phòng hoặc loại phòng cần tìm");
 
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnTimKiem.setFont(new Font("SansSerif", Font.PLAIN, 20));
@@ -355,16 +363,17 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
-		if (o.equals(btnNhanPhong)) {
+		if (o.equals(btnNhanPhong)) { // Nhận phòng cho khách hàng đã đặt phòng trước
 			try {
-				// Mở một cửa sổ mới trong đó chứa danh sách tất cả các phiếu đặt phòng đang trong trạng thái "Chờ nhận phòng"
+				// Mở một cửa sổ mới trong đó chứa danh sách tất cả các phiếu đặt phòng đang
+				// trong trạng thái "Chờ nhận phòng"
 				winNhanPhong = new Frm_NhanPhong();
 				winNhanPhong.setVisible(true);
 				winNhanPhong.getBtnNhanPhong().addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						// TODO Auto-generated method stub
+						// Hiển thị các thông tin của khách hàng
 						lblHienThiTenKhachHang.setText(winNhanPhong.getHoTenKhachHang());
 						lblHienThiSoDienThoai.setText(winNhanPhong.getSoDienThoai());
 						txtThoiGianVao.setText(formatDateTime(winNhanPhong.getThoiGianDat()));
@@ -376,36 +385,64 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 				e1.printStackTrace();
 			}
 		} else if (o.equals(btnTimKiem)) {
-
-		} else if (o.equals(btnThemDichVuVaoHoaDon)) {
+			// Tìm kiếm tên phòng hoặc loại phòng
+			String chuoiTim = "";
+			if (!txtTimKiem.getText().trim().equals("")) {
+				chuoiTim += "tenPhong like N'%" + txtTimKiem.getText() + "%' or lp.tenLoaiPhong like N'%"
+						+ txtTimKiem.getText() + "%'";
+				List<Phong> dsPhongByTenHoacLoaiPhong;
+				try {
+					dsPhongByTenHoacLoaiPhong = phongDAO.getAllTablePhongByTenPhongOrTenLoaiPhong(chuoiTim);
+					if (dsPhongByTenHoacLoaiPhong.size() != 0) {
+						modelPhong.getDataVector().removeAllElements();
+						updateTableData_Phong(dsPhongByTenHoacLoaiPhong);
+					} else {
+						JOptionPane.showMessageDialog(this, "Không tìm thấy tên phòng hoặc loại phòng!");
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		} else if (o.equals(btnThemDichVuVaoHoaDon)) { // Thêm dịch vụ vào hóa đơn
+			// Xét trường hợp khách hàng đã được chọn chưa
 			if (lblHienThiTenKhachHang.getText().equals("")) {
 				JOptionPane.showMessageDialog(this, "Cần phải có khách hàng mới có thể thêm dịch vụ!");
-			} else if (txtSoLuong.getText().trim().equals("")) {
+			} else if (txtSoLuong.getText().trim().equals("")) { // Xét xem số lượng đã nhập chưa
 				JOptionPane.showMessageDialog(this, "Bạn phải nhập số lượng!");
 				txtSoLuong.requestFocus();
+			} else if (!txtSoLuong.getText().trim().matches("^\\d+$")) {
+				JOptionPane.showMessageDialog(this, "Số lượng phải là chữ số!");
 			} else {
 				int row = tblChonDichVu.getSelectedRow();
 				int slt = (int) tblChonDichVu.getValueAt(row, 2);
 				int sl = Integer.parseInt(txtSoLuong.getText());
+				// Xét trường hợp số lượng vừa nhập có lớn hơn số lượng tồn không
 				if (sl > slt) {
 					JOptionPane.showMessageDialog(this, "Số lượng đặt dịch vụ phải bé hơn số lượng tồn!");
 					txtSoLuong.requestFocus();
 				} else {
-					String tendv = tblChonDichVu.getValueAt(row, 0).toString();
-					for (DichVu dv : listDichVu) {
-						if (dv.getTenDichVu().equals(tendv)) {
-							int count = modelChiTietHoaDon.getRowCount();
-							count++;
-							modelChiTietHoaDon.addRow(new Object[] { count, dv.getMaDichVu(), dv.getTenDichVu(), sl,
-									dv.getDonGia(), tinhThanhTien(sl, dv.getDonGia()) });
+					try {
+						String tendv = tblChonDichVu.getValueAt(row, 0).toString();
+						for (DichVu dv : listDichVu) {
+							if (dv.getTenDichVu().equals(tendv)) {
+								int count = modelChiTietHoaDon.getRowCount();
+								count++;
+								modelChiTietHoaDon.addRow(new Object[] { count, dv.getMaDichVu(), dv.getTenDichVu(), sl,
+										df.format(dv.getDonGia()), df.format(tinhThanhTienDichVu(sl, dv.getDonGia())) });
+							}
 						}
+						txtSoLuong.setText("");
+						tblChonDichVu.setValueAt(tinhSoLuongTon(slt, sl), row, 2);
+						capNhatLaiSoLuongTonTrongTableDichVu();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-					txtSoLuong.setText("");
-					tblChonDichVu.setValueAt(tinhSoLuongTon(slt, sl), row, 2);
 				}
 			}
-
-		} else if (o.equals(btnThemPhongVaoHoaDon)) {
+		} else if (o.equals(btnThemPhongVaoHoaDon)) { // Thêm phòng vào hóa đơn khi khách hàng đó chưa đặt phòng trước
+			// Xét trường hợp khách hàng chưa được chọn
 			if (lblHienThiTenKhachHang.getText().equals("")) {
 				JOptionPane.showMessageDialog(this, "Bạn chưa chọn khách hàng cần thêm vào hóa đơn!");
 			} else {
@@ -415,11 +452,11 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 				for (Phong p : listPhong) {
 					if (p.getTenPhong().equals(tenphong)) {
 						modelChiTietHoaDon.addRow(new Object[] { count, p.getMaPhong(), p.getTenPhong(), 0 + "h",
-								p.getDonGia(), p.getDonGia() });
+								df.format(p.getDonGia()), df.format(p.getDonGia()) });
 					}
 				}
 			}
-		} else if (o.equals(btnLuuHoaDon)) {
+		} else if (o.equals(btnLuuHoaDon)) { // Lưu hóa đơn cho khách hàng và bắt đầu tính giờ sử dụng phòng
 			int rowCount = tblChiTietHoaDon.getRowCount();
 			String tenkh = lblHienThiTenKhachHang.getText();
 			String makh = "";
@@ -440,28 +477,32 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 				NhanVien nv = new NhanVien(manv);
 				Phong p = new Phong(maphong);
 				HoaDon hd = null;
+				// Nếu khung thời gian vào không rỗng (khách hàng đã đặt phòng trước đó)
 				if (txtThoiGianVao.getText().equals("")) {
 					hd = new HoaDon(mahd, kh, nv, p, ngaylap, null, tt);
 				} else {
 					Timestamp tgbatdau = winNhanPhong.getThoiGianDat();
 					hd = new HoaDon(mahd, kh, nv, p, tgbatdau, null, tt);
 				}
-				hoaDonDAO.insertHoaDon(hd);
+				hoaDonDAO.insertHoaDon(hd); // Thêm hóa đơn
+				// Chạy vòng lặp để thêm các chi tiết hóa đơn
 				for (int row = 1; row < rowCount; row++) {
 					HoaDon hd2 = new HoaDon(mahd);
 					String madv = tblChiTietHoaDon.getValueAt(row, 1).toString();
 					int sl = Integer.parseInt(tblChiTietHoaDon.getValueAt(row, 3).toString());
-					double dongia = Double.parseDouble(tblChiTietHoaDon.getValueAt(row, 4).toString());
+					double dongia = Double.parseDouble(tblChiTietHoaDon.getValueAt(row, 4).toString().replace(",", ""));
 					DichVu dv = new DichVu(madv);
 					ChiTietHoaDon cthd = new ChiTietHoaDon(hd2, dv, sl, dongia);
 					chiTietHoaDonDAO.insertChiTietHoaDon(cthd);
 				}
+				// Cập nhật trạng thái của phiếu đặt phòng và phòng
 				phieuDatPhongDAO.updateTrangThai(mapd, "Đã nhận phòng");
 				phongDAO.updateTrangThai(maphong, "Đang sử dụng");
 				txtThoiGianVao.setText("");
 				capNhatLaiSoLuongTonTrongTableDichVu();
 				JOptionPane.showMessageDialog(this, "Bạn đã thêm hóa đơn thành công!");
 				JOptionPane.showMessageDialog(this, "Bắt đầu tính giờ nhận phòng!");
+				// Tải lại dữ liệu của bảng chọn phòng
 				listPhong = phongDAO.getAllTablePhong();
 				updateTableData_Phong(listPhong);
 
@@ -471,7 +512,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 			}
 			modelChiTietHoaDon.getDataVector().removeAllElements();
 
-		} else if (o.equals(cmbLoaiDichVu)) {
+		} else if (o.equals(cmbLoaiDichVu)) { // Lọc các loại dịch vụ của dịch vụ
 			String dvTim = cmbLoaiDichVu.getSelectedItem().toString();
 			if (!dvTim.equals("")) {
 				modelDichVu.getDataVector().removeAllElements();
@@ -492,7 +533,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 				}
 			}
 
-		} else if (o.equals(cmbTrangThai)) {
+		} else if (o.equals(cmbTrangThai)) { // Lọc các trạng thái của phòng
 			String ttTim = cmbTrangThai.getSelectedItem().toString();
 			if (!ttTim.equals("")) {
 				modelPhong.getDataVector().removeAllElements();
@@ -528,7 +569,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 					break;
 				}
 			}
-			modelPhong.addRow(new Object[] { p.getMaPhong(), p.getTenPhong(), tenlp, p.getDonGia(), p.getTrangThai() });
+			modelPhong.addRow(new Object[] { p.getMaPhong(), p.getTenPhong(), tenlp, df.format(p.getDonGia()), p.getTrangThai() });
 		}
 	}
 
@@ -537,7 +578,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		modelDichVu.getDataVector().removeAllElements();
 		for (DichVu dv : listDichVu) {
 			modelDichVu.addRow(new Object[] { dv.getTenDichVu(), dv.getLoaiDichVu().getTenLoaiDichVu(),
-					dv.getSoLuongTon(), dv.getDonGia() });
+					dv.getSoLuongTon(), df.format(dv.getDonGia()) });
 		}
 	}
 
@@ -549,7 +590,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		for (Phong p : listPhong) {
 			if (p.getTenPhong().equals(tenphong)) {
 				modelChiTietHoaDon.addRow(
-						new Object[] { count, p.getMaPhong(), p.getTenPhong(), 0 + "h", p.getDonGia(), p.getDonGia() });
+						new Object[] { count, p.getMaPhong(), p.getTenPhong(), 0 + "h", df.format(p.getDonGia()), df.format(p.getDonGia()) });
 			}
 		}
 	}
@@ -561,6 +602,7 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		}
 	}
 
+	// Cập nhật lại số lượng tồn trong bảng chọn dịch vụ
 	private void capNhatLaiSoLuongTonTrongTableDichVu() throws Exception {
 		int rowCount = tblChonDichVu.getRowCount();
 		for (int row = 0; row < rowCount; row++) {
@@ -571,6 +613,30 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		listDichVu = dichVuDAO.getAllTableDichVu();
 	}
 
+	// Thêm chữ gợi ý vào trong JTextField
+	private void setPlaceholder(JTextField textField, String placeholder) {
+		textField.setForeground(Color.GRAY);
+		textField.setText(placeholder);
+
+		textField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (textField.getText().equals(placeholder)) {
+					textField.setText("");
+					textField.setForeground(Color.BLACK);
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (textField.getText().isEmpty()) {
+					textField.setForeground(Color.GRAY);
+					textField.setText(placeholder);
+				}
+			}
+		});
+	}
+
 	private String formatDateTime(Date currentDate) {
 		// Định dạng theo mẫu dd-MM-yyyy HH:mm:ss
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -578,13 +644,14 @@ public class LapHoaDon_GUI extends JPanel implements ActionListener, MouseListen
 		// Chuyển đổi và in ra ngày giờ theo định dạng
 		return sdf.format(currentDate);
 	}
-
+	
+	// Tính số lượng tồn còn lại của dịch vụ
 	private int tinhSoLuongTon(int soLuongTon, int soLuong) {
 		return soLuongTon - soLuong;
 	}
 
 	// Tính tổng thành tiền cho dịch vụ
-	private double tinhThanhTien(int soLuong, double donGia) {
+	private double tinhThanhTienDichVu(int soLuong, double donGia) {
 		return soLuong * donGia;
 	}
 }

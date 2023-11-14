@@ -121,7 +121,9 @@ public class CapNhatLoaiPhong_GUI extends JPanel implements ActionListener, Mous
 		scrLoaiPhong.getViewport().setBackground(Color.WHITE);
 		scrLoaiPhong.setBorder(BorderFactory.createLineBorder(new Color(185, 185, 185)));
 		tblLoaiPhong.getTableHeader().setBackground(new Color(120, 255, 239));
-		tblLoaiPhong.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+		tblLoaiPhong.getTableHeader().setFont(new Font(Font.SANS_SERIF, Font.BOLD, 23));
+		tblLoaiPhong.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		tblLoaiPhong.setRowHeight(50);
 		add(scrLoaiPhong);
 		loadDanhSachLoaiPhong();
 		docDuLieuVaoTable();
